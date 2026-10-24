@@ -19,6 +19,7 @@ flowchart LR
 |---|---|
 | **Eingabe** | eine URL einer Tableau-Ansicht (`https://<server>/t/<site>/views/<Arbeitsmappe>/<Blatt>`) |
 | **Ausgabe** | `kreise.csv` und `kreise.parquet` (eine Zeile je Kreis, `ags5` + alle Felder), `meta.json` (Herkunft, Prüfsummen) |
+| **Geladen** | nur, wenn die Arbeitsmappe neu veröffentlicht wurde (kleine Vorabprüfung); spätestens alle 30 Tage trotzdem voll, falls die Quelle still aktualisiert wird |
 | **Neu geschrieben** | nur, wenn sich mindestens ein Wert geändert hat |
 | **Läuft** | lokal bzw. im Homelab. Aus Rechenzentren (GitHub Actions, Cloud-VMs) sperrt der BBSR-Server mit 403, siehe [Zugangsbericht](docs/zugangsbericht.md) |
 
@@ -115,7 +116,7 @@ neu: out/bbr-wohnungsneubaubedarfe…/20261024T120000Z_3fa9c2d1/
 Ein zweiter Lauf ohne Datenänderung:
 
 ```
-unverändert (Fingerabdruck 3fa9c2d1…), nichts geschrieben
+unverändert (Veröffentlichungsstand 2025-03-05T15:16:42Z), nichts geladen
 ```
 
 ### 3. Ergebnis verwenden
@@ -149,6 +150,8 @@ res.path        # Ausgabeordner
 | `--check-sum 320000 --check-field <spalte>` | Summe über alle Kreise gegen Sollwert prüfen, Abweichung in % |
 | `--gebietsstand 2023` | Referenzliste der Kreise erzwingen |
 | `--referenz <datei>` | eigene Referenzliste verwenden |
+| `--force` | voll laden, auch wenn der Veröffentlichungsstand unverändert ist |
+| `--full-check-days 30` | spätestens nach so vielen Tagen trotzdem voll laden und vergleichen |
 | `--replay <raw-ordner>` | gespeicherte Rohantworten neu auswerten, ohne Abruf (alternativ `TABLEAU_EXTRACT_REPLAY`) |
 
 ### Exit-Codes

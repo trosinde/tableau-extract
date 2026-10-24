@@ -39,7 +39,7 @@ Datenwörterbuch: 401 Ganzzahlen, 1085 Dezimalwerte, 1301 Texte und 400 Polygone
 | Weg | Status | Umsetzen? |
 |---|---|---|
 | A View-Data-Export (`.csv`) | gesperrt (404 `missing-view`) | nur als Versuch mit protokolliertem Fehlschlag |
-| B VizQL-Session per HTTP | Daten vorhanden. Per Browser bestätigt, per reinem HTTP (startSession → bootstrapSession) noch nicht einzeln geprüft | **ja, Hauptweg** |
+| B VizQL-Session per HTTP | funktioniert, nachgeprüft am 24.10.2026 (startSession → bootstrapSession per `requests`, 3,4 MB). `startSession` bestätigt die Rechte: `allow_export_data=false`, `allow_view_underlying=false`, `allow_summary=false` | **ja, Hauptweg** |
 | C Crosstab-/Daten-Download | nicht angeboten | nein, nur protokolliert |
 | D Netzwerkmitschnitt (Playwright) | funktioniert (T5) | **ja, Rückfallweg** |
 

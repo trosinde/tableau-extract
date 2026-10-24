@@ -179,15 +179,7 @@ Je erfolgreichem Lauf mit geänderten Daten SHALL das System den Ordner `out/<sl
 - **THEN** erhält es in `kreise.csv` einen eindeutigen snake_case-Namen, und `meta.json` ordnet ihm den Originalnamen zu
 
 ### Requirement: Nachvollziehbarkeit
-Das System SHALL je Lauf in `meta.json` festhalten:
-- die Eingabe-URL und die normalisierte URL
-- den verwendeten Weg und das Blatt
-- den Filterzustand sowie alle Filter mit ihren Werten
-- Feldliste mit Original- und Spaltennamen, Datentyp und Werttyp
-- Abrufzeit (UTC) und Gebietsschema
-- die SHA-256-Prüfsummen jeder Rohantwort und den Daten-Fingerabdruck
-- die Fehlversuche mit Weg, HTTP-Status und Meldung
-- die Ergebnisse der Prüfungen
+Das System SHALL je Lauf in `meta.json` festhalten: Eingabe- und normalisierte URL, Weg, Blatt, Filterzustand und alle Filter mit Werten, Feldliste (Original- und Spaltenname, Datentyp, Werttyp), Abrufzeit (UTC), Gebietsschema, Veröffentlichungsstand (sofern verfügbar), SHA-256 je Rohantwort, Daten-Fingerabdruck, Fehlversuche (Weg, HTTP-Status, Meldung) und Prüfergebnisse.
 
 #### Scenario: Metadaten eines Laufs
 - **WHEN** ein Lauf über Weg B Daten liefert
@@ -207,6 +199,36 @@ Das System SHALL nach jedem Abruf einen Daten-Fingerabdruck (SHA-256) aus dem In
 #### Scenario: Geänderter Wert
 - **WHEN** sich mindestens ein Wert eines Kreises gegenüber dem Lauf hinter `latest` geändert hat
 - **THEN** wird ein neuer Ordner geschrieben, und `latest` zeigt darauf
+
+### Requirement: Vorabprüfung des Veröffentlichungsstands
+Vor dem vollständigen Abruf SHALL das System mit einer kleinen Anfrage den Veröffentlichungsstand der Arbeitsmappe lesen (Zeitpunkt der letzten Veröffentlichung und Inhaltsversion). Ist er gleich dem gespeicherten Stand und liegt die letzte Vollprüfung weniger als `--full-check-days` Tage (Standard 30) zurück, SHALL das System die Daten nicht laden und nichts schreiben.
+
+#### Scenario: Unveränderter Veröffentlichungsstand
+- **WHEN** der Veröffentlichungsstand gleich dem gespeicherten ist und die letzte Vollprüfung 3 Tage zurückliegt
+- **THEN** lädt das System die Daten nicht, meldet „unverändert (Veröffentlichungsstand)“ mit Exit-Code 0, und `latest` bleibt unverändert
+
+#### Scenario: Neue Veröffentlichung
+- **WHEN** sich der Zeitpunkt der letzten Veröffentlichung oder die Inhaltsversion geändert hat
+- **THEN** lädt das System die Daten vollständig und entscheidet über den Daten-Fingerabdruck, ob ein neuer Ordner entsteht
+
+#### Scenario: Sicherheitsnetz nach Ablauf der Frist
+- **WHEN** der Veröffentlichungsstand gleich ist, die letzte Vollprüfung aber 31 Tage zurückliegt
+- **THEN** lädt das System die Daten vollständig, vergleicht den Fingerabdruck und vermerkt die neue Vollprüfung
+
+#### Scenario: Vollabruf erzwungen
+- **WHEN** `--force` angegeben ist
+- **THEN** lädt das System die Daten vollständig, unabhängig vom Veröffentlichungsstand
+
+#### Scenario: Stand nicht verfügbar
+- **WHEN** die Antwort keinen Veröffentlichungsstand enthält oder der Weg ihn nicht liefern kann
+- **THEN** lädt das System die Daten vollständig
+
+### Requirement: Zustand der Änderungserkennung
+Das System SHALL je Ansicht `out/<slug>/state.json` mit Veröffentlichungsstand, Zeitpunkt der letzten Vollprüfung und Daten-Fingerabdruck führen. Eine Aktualisierung dieser Datei SHALL NOT einen neuen Lauf-Ordner anlegen oder `latest` verändern.
+
+#### Scenario: Vollprüfung ohne Datenänderung
+- **WHEN** eine Vollprüfung denselben Fingerabdruck wie `latest` ergibt
+- **THEN** wird nur der Zeitpunkt der letzten Vollprüfung in `state.json` aktualisiert, ohne neuen Ordner
 
 ### Requirement: Gesperrte Quelle
 WHEN kein Weg Daten liefert, SHALL das System mit Exit-Code 2 enden, einen Bericht der Fehlversuche (Weg, HTTP-Status, Meldung) ausgeben und SHALL NOT eine Datentabelle, Teil- oder Schätzdaten schreiben.

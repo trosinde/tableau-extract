@@ -118,7 +118,11 @@ sequenceDiagram
     participant P as Parser + Normalisierung
     participant FS as out/<slug>/
 
-    CLI->>W: Daten abrufen (genau ein Abruf)
+    CLI->>W: Veröffentlichungsstand (startSession, klein)
+    alt Stand gleich state.json und Vollprüfung < 30 Tage
+        CLI-->>CLI: "unverändert (Veröffentlichungsstand)", Exit 0
+    end
+    CLI->>W: Daten abrufen (bootstrapSession)
     W-->>CLI: RawCapture + Versuchsprotokoll
     CLI->>P: parsen, normalisieren, Kreise zuordnen
     P-->>CLI: Tabelle + Daten-Fingerabdruck
@@ -173,7 +177,7 @@ Ablauf:
 
 *Alternative:* `TableauScraper` als Abhängigkeit. Verworfen: Die Bibliothek ist kaum gepflegt, zieht schwere Abhängigkeiten nach und verdeckt die Alias-Logik, die hier für die Exaktheit entscheidend ist. Wir übernehmen ihre bekannte Struktur nur als Vorlage.
 
-**Offen bis zur Umsetzung:** Ob Weg B per reinem HTTP ohne JavaScript-Ausführung gelingt, ist noch nicht einzeln geprüft (Zugangsbericht). Deshalb gibt es Weg D.
+**Bestätigt am 24.10.2026:** Weg B gelingt per reinem HTTP ohne JavaScript: `GET <view>?:embed=y` (Cookies) → `POST startSession/viewing` (JSON mit `sessionid`, `sheetId`, `vizql_root`, Rechten wie `allow_export_data=false`) → `POST bootstrapSession/sessions/<id>` mit `sheet_id` und `clientDimension` (3,4 MB). Weg D bleibt Rückfall für Server, die das verweigern.
 
 ### D3 Weg D: Playwright als optionales Extra
 
@@ -235,12 +239,29 @@ SHA-256( JSON kanonisch {
 - Die Prüfsummen der Rohantworten stehen weiterhin in `meta.json`, entscheiden aber nicht über „geändert“, denn sie enthalten Sitzungs-IDs.
 - **Abweichung vom Auftrag:** Der Auftrag sah die Prüfsumme der Rohantworten vor. Damit würde jeder Lauf als geändert gelten, weil sich die Rohantworten bei jedem Abruf unterscheiden.
 
-*Alternative:* ein billiger Vorab-Check (ETag der Ladeseite, Änderungsdatum der Arbeitsmappe), um auch den Abruf zu sparen. Verworfen:
+**Vorabprüfung (D7a):** `startSession/viewing` liefert als kleines JSON (ca. 10 KB) unter anderem `workbookLastPublishedAt` (BBSR: `2025-03-05T15:16:42.359Z`), `workbookContentVersion` und `current_view_luid`. Der Live-Test vom 24.10.2026 hat das bestätigt. Daraus wird der *Veröffentlichungsstand* gebildet.
 
-- Der ETag der Ladeseite blieb bei Wiederholung zwar gleich, gehört aber zur Ladeseite, nicht zu den Daten.
-- Das Änderungsdatum steht nur in der REST-API, und die verlangt eine Anmeldung.
+- Ist er gleich dem in `out/<slug>/state.json` und die letzte Vollprüfung jünger als `--full-check-days` (Standard 30), endet der Lauf nach dieser einen kleinen Anfrage mit „unverändert (Veröffentlichungsstand)“.
+- Sonst folgt `bootstrapSession`, und der Fingerabdruck entscheidet.
+- **Sicherheitsnetz:** Ein Extrakt-Refresh ohne Neuveröffentlichung ändert den Stand womöglich nicht. Die Antworten verraten nicht, ob die Arbeitsmappe einen Extrakt nutzt. Deshalb wird nach spätestens 30 Tagen oder mit `--force` trotzdem voll geladen.
+- `state.json` liegt außerhalb der Lauf-Ordner. Eine DVC-Stufe, die nur `latest/kreise.parquet` als Ausgabe führt, löst darüber keine Folgestufen aus.
+- Weg A und Weg D liefern keinen Veröffentlichungsstand; dann wird immer voll geladen. Offline-Wiederholung überspringt die Vorabprüfung.
+- Entscheidung des Nutzers (24.10.2026): Vorabprüfung mit Sicherheitsnetz.
 
-Ein Abruf der `bootstrapSession` (ca. 4 MB) je Lauf ist daher nötig. Geschrieben und nachgelagert neu gerechnet wird nur bei echter Änderung.
+```mermaid
+flowchart TD
+    S([Lauf]) --> F{"--force oder --replay?"}
+    F -->|ja| FULL["Vollabruf<br/>bootstrapSession"]
+    F -->|nein| ST["startSession<br/>(klein)"]
+    ST --> P{"Stand vorhanden und<br/>gleich state.json?"}
+    P -->|nein| FULL
+    P -->|ja| AGE{"letzte Vollprüfung<br/>< 30 Tage?"}
+    AGE -->|nein| FULL
+    AGE -->|ja| U1(["unverändert (Veröffentlichungsstand)<br/>kein Download, Exit 0"])
+    FULL --> FP{"Fingerabdruck =<br/>latest?"}
+    FP -->|ja| U2(["unverändert (Daten)<br/>state.json: Vollprüfung aktualisiert"])
+    FP -->|nein| NEW(["neuer Ordner, latest umhängen,<br/>state.json aktualisieren"])
+```
 
 ### D8 Höflicher HTTP-Client
 
