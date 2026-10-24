@@ -181,7 +181,7 @@ Ablauf:
 
 ### D3 Weg D: Playwright als optionales Extra
 
-Headless Chromium lädt die Ansicht und zeichnet die `bootstrapSession`-Antwort auf. Weitere VizQL-Antworten werden nur bei `--all-filters` erfasst. Danach läuft derselbe Parser wie bei Weg B.
+Headless Chromium lädt die Ansicht und zeichnet die `startSession`- und `bootstrapSession`-Antwort auf. Danach läuft derselbe Parser wie bei Weg B. `--all-filters` wird nur über Weg B unterstützt (Filterbefehle per HTTP); Weg D meldet in diesem Fall einen Fehlversuch mit Begründung (Entscheidung bei der Umsetzung, 24.10.2026).
 
 Playwright ist das optionale Extra `tableau-extract[browser]`. Fehlt es, wird Weg D mit „Playwright nicht installiert“ protokolliert. Weg C nutzt dieselbe Browser-Sitzung, um das Download-Menü zu prüfen, ohne eine zweite Seite zu laden.
 
@@ -425,7 +425,7 @@ Optionen:
 - **Kein Live-Lauf aus GitHub Actions möglich** → Betrieb lokal bzw. im Homelab; CI nutzt die Offline-Wiederholung. Dokumentiert in der README.
 - **Notebook in CI prüft nicht den Live-Abruf** → Der Live-Test (`pytest -m live`) führt lokal zusätzlich das Notebook ohne Replay aus.
 - **Öffentliches Repo macht die Nutzung der VizQL-Schnittstelle sichtbar** → eigene ehrliche Kennung, Drossel, ein Abruf je Lauf; die README nennt das offen.
-- **Ein Abruf je Lauf, auch wenn unverändert** (ca. 4 MB) → bei der vorgesehenen Frequenz (Pipeline-Lauf, nicht minütlich) unkritisch und durch die Drosselung höflich.
+- **Rohantworten enthalten Zugangsdaten des Betreibers** (z. B. den öffentlichen Mapbox-Token der Karte) → `raw/` bleibt laut Spec unverändert; README weist darauf hin, `raw/` nicht zu veröffentlichen. Test-Fixtures und Beispieldaten im Repo werden von `make_fixture.py` bereinigt.
 
 ## Migration Plan
 

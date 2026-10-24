@@ -110,3 +110,15 @@ class RawCapture:
     view: ParsedView
     #: je Filterwert-Kombination eine Ansicht (nur mit --all-filters)
     filter_views: list[tuple[dict[str, str], ParsedView]] = field(default_factory=list)
+    #: Veröffentlichungsstand der Arbeitsmappe (sofern der Weg ihn kennt)
+    stamp: dict[str, Any] | None = None
+    #: weitere Angaben des Servers, z. B. Rechte (allow_export_data)
+    info: dict[str, Any] = field(default_factory=dict)
+
+
+class MethodFailed(Exception):
+    """Ein Extraktionsweg hat keine Daten geliefert; `attempt` nennt den Grund."""
+
+    def __init__(self, attempt: Attempt) -> None:
+        super().__init__(attempt.message)
+        self.attempt = attempt

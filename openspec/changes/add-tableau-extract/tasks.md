@@ -25,12 +25,12 @@
 
 ## 5. Extraktionswege
 
-- [ ] 5.1 Weg A `methods/csv.py`: `GET <view>.csv`, Erfolg nur bei 200 und CSV-Inhalt, sonst Protokolleintrag; prüfen mit Tests (gemocktes CSV → Tabelle; 404 `missing-view` → Fehlversuch mit Status)
-- [ ] 5.2 Weg B `methods/vizql.py`: Ladeseite → `startSession/viewing` → `bootstrapSession` per HTTP nach D2, Rohantworten als `RawCapture`; prüfen mit gemocktem Ablauf (`responses`) und Fixture → 400 Zeilen; danach einmal live lokal ausführen und Ergebnis (Erfolg oder Fehlergrund) im PR notieren
-- [ ] 5.3 Wege C/D `methods/browser.py`: eine Playwright-Sitzung, `bootstrapSession` mitschneiden (D), Download-Menü auf „Daten“/„Kreuztabelle“ prüfen und protokollieren (C), ohne Playwright sauberer Fehlversuch; prüfen mit Test „Playwright fehlt → Protokolleintrag“ und Parser-Test auf mitgeschnittener Fixture
-- [ ] 5.4 Orchestrierung: Reihenfolge A→B→C→D, `--method`, Abbruch beim ersten Erfolg, alle gescheitert → `BlockedError` mit Bericht; prüfen mit Tests (A 404 + B ok → `vizql` mit Protokoll A; alle 403 → Exit 2, kein `kreise.csv`, `latest` unverändert)
-- [ ] 5.5 `--all-filters`: je Filterwert Abzug ziehen (Weg B/D), Filterspalten ergänzen; prüfen mit synthetischer Fixture (2 Filterwerte → doppelte Zeilenzahl + Spalte)
-- [ ] 5.6 Offline-Wiederholung `--replay`/`TABLEAU_EXTRACT_REPLAY`: Rohdateien aus `raw/` laden, gleicher Parser, `method = replay`, keine Netzwerkanfrage, fehlende Dateien → Exit 1; prüfen mit Tests (Replay der Fixture ergibt dieselbe Tabelle wie Weg B; `responses` meldet null Aufrufe; leerer Ordner → Fehler mit erwarteten Dateinamen)
+- [x] 5.1 Weg A `methods/csv.py`: `GET <view>.csv`, Erfolg nur bei 200 und CSV-Inhalt, sonst Protokolleintrag; prüfen mit Tests (gemocktes CSV → Tabelle; 404 `missing-view` → Fehlversuch mit Status)
+- [x] 5.2 Weg B `methods/vizql.py`: Ladeseite → `startSession/viewing` → `bootstrapSession` per HTTP nach D2, Rohantworten als `RawCapture`; prüfen mit gemocktem Ablauf (`responses`) und Fixture → 400 Zeilen; danach einmal live lokal ausführen und Ergebnis (Erfolg oder Fehlergrund) im PR notieren
+- [x] 5.3 Wege C/D `methods/browser.py`: eine Playwright-Sitzung, `bootstrapSession` mitschneiden (D), Download-Menü auf „Daten“/„Kreuztabelle“ prüfen und protokollieren (C), ohne Playwright sauberer Fehlversuch; prüfen mit Test „Playwright fehlt → Protokolleintrag“ und Parser-Test auf mitgeschnittener Fixture
+- [x] 5.4 Orchestrierung: Reihenfolge A→B→C→D, `--method`, Abbruch beim ersten Erfolg, alle gescheitert → `BlockedError` mit Bericht; prüfen mit Tests (A 404 + B ok → `vizql` mit Protokoll A; alle 403 → Exit 2, kein `kreise.csv`, `latest` unverändert)
+- [x] 5.5 `--all-filters`: je Filterwert Abzug ziehen (Weg B; Weg D meldet Fehlversuch), Filterspalten ergänzen; prüfen mit synthetischer Fixture (2 Filterwerte → doppelte Zeilenzahl + Spalte)
+- [x] 5.6 Offline-Wiederholung `--replay`/`TABLEAU_EXTRACT_REPLAY`: Rohdateien aus `raw/` laden, gleicher Parser, `method = replay`, keine Netzwerkanfrage, fehlende Dateien → Exit 1; prüfen mit Tests (Replay der Fixture ergibt dieselbe Tabelle wie Weg B; `responses` meldet null Aufrufe; leerer Ordner → Fehler mit erwarteten Dateinamen)
 
 ## 6. Ausgabe, Fingerabdruck, Änderungserkennung
 
