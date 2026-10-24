@@ -71,7 +71,7 @@ def _inner(caption: str) -> tuple[str | None, str]:
 
 
 def _is_keylike(values: list[Value]) -> bool:
-    present = [v for v in values if v is not None and str(v).strip() != ""]
+    present = [v for v in values if not is_special(v)]
     if not present:
         return False
     for v in present:

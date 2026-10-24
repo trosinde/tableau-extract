@@ -21,7 +21,7 @@
 
 - [x] 4.1 `normalize.py`: Zahlen nach Locale mit `Decimal` (en/de, nicht eindeutig → Fehler), Sonderwerte leer, Klassenfelder mit `<feld>_typ`; prüfen mit `tests/test_numbers.py` (`1.234,5`→1234.5 de, `1,600`→1600 en, `75.4` exakt, `*`/`null`/leer → leer, Klasse → `klasse`)
 - [x] 4.2 Destatis-Kreisliste Gebietsstand 31.12.2023 beschaffen, als `src/tableau_extract/data/kreise_2023.csv` (`ags5;name;typ`, 400 Zeilen) einchecken, Herkunft/URL/SHA-256 in `src/tableau_extract/data/README.md`; prüfen mit Test „400 eindeutige ags5“
-- [ ] 4.3 `regions.py`: Schlüssel normalisieren (D6), Gebietsstand ableiten, Namensabgleich (Umlaute, Zusätze), Mehrdeutigkeit → Fehler mit Kandidaten, Vollständigkeit (fehlend/überzählig/doppelt), Referenz-Suchreihenfolge `--referenz` → `./config/` → Paket mit Herkunft in den Metadaten (`importlib.resources`); prüfen mit `tests/test_regions.py` (`8111`→`08111`, `9764000`→`09764`, „Ahrweiler, Landkreis“, „Muenchen, Landkreis“, mehrdeutiger Name → Exit-3-Fehler, 398 Kreise → Warnung mit Liste, Projektdatei hat Vorrang vor Paket, ohne `config/` → `referenz = paket`)
+- [x] 4.3 `regions.py`: Schlüssel normalisieren (D6), Gebietsstand ableiten, Namensabgleich (Umlaute, Zusätze), Mehrdeutigkeit → Fehler mit Kandidaten, Vollständigkeit (fehlend/überzählig/doppelt), Referenz-Suchreihenfolge `--referenz` → `./config/` → Paket mit Herkunft in den Metadaten (`importlib.resources`); prüfen mit `tests/test_regions.py` (`8111`→`08111`, `9764000`→`09764`, „Ahrweiler, Landkreis“, „Muenchen, Landkreis“, mehrdeutiger Name → Exit-3-Fehler, 398 Kreise → Warnung mit Liste, Projektdatei hat Vorrang vor Paket, ohne `config/` → `referenz = paket`)
 
 ## 5. Extraktionswege
 

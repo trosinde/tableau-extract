@@ -13,5 +13,9 @@ def test_reference_list_has_400_unique_keys(year: int) -> None:
     assert len(set(keys)) == 400
     assert all(len(k) == 5 and k.isdigit() for k in keys)
     assert {r["typ"] for r in rows} <= {
-        "Kreisfreie Stadt", "Stadtkreis", "Kreis", "Landkreis", "Regionalverband",
+        "Kreisfreie Stadt",
+        "Stadtkreis",
+        "Kreis",
+        "Landkreis",
+        "Regionalverband",
     }
