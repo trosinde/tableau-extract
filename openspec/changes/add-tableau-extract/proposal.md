@@ -50,6 +50,14 @@ Die Zugangsprüfung (`docs/zugangsbericht.md`, Einstufung **A-lokal**) zeigt den
   | 2 | alle Wege gesperrt, keine Datentabelle |
   | 3 | Kreise nicht eindeutig zuordenbar, keine Datentabelle |
 
+- **Installation und Nutzung im Jupyter-Notebook** (wie bei `demografie-fetch`):
+  - Installation per `%pip install "git+https://github.com/trosinde/tableau-extract.git@v0.1.0"` aus dem öffentlichen Repo, Version über Git-Tag festgelegt; Browser-Rückfallweg über das Extra `[browser]`.
+  - Die Kreis-Referenzliste liegt im Paket, damit alles auch außerhalb des Repos funktioniert. Eine Datei im Projekt (`./config/`) hat Vorrang.
+  - `ExtractResult` zeigt im Notebook eine kurze Zusammenfassung (Status, Weg, Blatt, Zeilen, Vollständigkeit, Pfad) statt des ganzen DataFrames. `list_view(url)` ist Teil der öffentlichen API.
+  - **Offline-Wiederholung:** `--replay <raw-ordner>` bzw. `TABLEAU_EXTRACT_REPLAY` verarbeitet gespeicherte Rohantworten statt abzurufen. Das macht ältere Läufe neu auswertbar und erlaubt es, das Beispiel-Notebook in CI auszuführen, obwohl der BBSR-Server Rechenzentren sperrt.
+  - Beispiel-Notebook `notebooks/schnellstart.ipynb`, in CI bei jeder Änderung vollständig ausgeführt (aus dem gebauten Wheel, mit Offline-Wiederholung).
+  - README-Abschnitt „Im Jupyter-Notebook“, Release 0.1.0 mit Git-Tag und CHANGELOG.
+- **Veröffentlichung des Repos** erst nach Bereinigung persönlicher Daten und ausdrücklicher Freigabe (Entscheidungspunkt, siehe design.md).
 - Dazu kommen Tests mit Fixtures (ohne Netzwerk), ein Live-Test (`@pytest.mark.live`, standardmäßig aus), `ruff` und `mypy`, eine CI für Lint und Tests, README mit DVC-Beispiel, LICENSE (MIT) und CHANGELOG.
 
 ## Capabilities
@@ -57,6 +65,7 @@ Die Zugangsprüfung (`docs/zugangsbericht.md`, Einstufung **A-lokal**) zeigt den
 ### New Capabilities
 
 - `tableau-extract`: Extraktion der Daten einer Tableau-Kartenansicht je Landkreis. Umfasst Eingabe, Extraktionswege, Exaktheit, Kreiszuordnung, Ausgabeformat, Nachvollziehbarkeit, Änderungserkennung und Fehlerverhalten.
+- `notebook-usage`: Installation aus dem Repo, Lauffähigkeit außerhalb des Repos, Darstellung im Notebook und Offline-Wiederholung, abgesichert durch ein in CI ausgeführtes Beispiel-Notebook.
 
 ### Modified Capabilities
 
@@ -66,5 +75,8 @@ Die Zugangsprüfung (`docs/zugangsbericht.md`, Einstufung **A-lokal**) zeigt den
 
 - **Neuer Code:** `src/tableau_extract/` mit CLI und API, `tests/` mit Fixtures, `src/tableau_extract/data/` mit der Kreis-Referenzliste.
 - **Abhängigkeiten:** `requests`, `pandas`, `pyarrow`; `playwright` als optionales Extra `browser` für Weg D.
-- **Betrieb:** nur von Nicht-Rechenzentrums-IPs (lokal, Homelab). GitHub Actions fährt nur Lint und Offline-Tests.
+- **Neue Dateien:** `notebooks/schnellstart.ipynb`, Workflow `notebook.yml`, eine kleine aufgezeichnete Rohantwort unter `notebooks/beispiel_raw/` für das Notebook in CI.
+- **Entwicklungsabhängigkeiten:** `nbclient`, `ipykernel` (nur CI und Tests).
+- **GitHub:** Sichtbarkeit öffentlich (nach Freigabe), Tag `v0.1.0`.
+- **Betrieb:** nur von Nicht-Rechenzentrums-IPs (lokal, Homelab). GitHub Actions fährt nur Lint, Offline-Tests und das Notebook mit Offline-Wiederholung.
 - `probe/` bleibt als Werkzeug der Zugangsprüfung bestehen.

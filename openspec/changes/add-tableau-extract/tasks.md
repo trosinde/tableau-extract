@@ -21,7 +21,7 @@
 
 - [ ] 4.1 `normalize.py`: Zahlen nach Locale mit `Decimal` (en/de, nicht eindeutig → Fehler), Sonderwerte leer, Klassenfelder mit `<feld>_typ`; prüfen mit `tests/test_numbers.py` (`1.234,5`→1234.5 de, `1,600`→1600 en, `75.4` exakt, `*`/`null`/leer → leer, Klasse → `klasse`)
 - [ ] 4.2 Destatis-Kreisliste Gebietsstand 31.12.2023 beschaffen, als `src/tableau_extract/data/kreise_2023.csv` (`ags5;name;typ`, 400 Zeilen) einchecken, Herkunft/URL/SHA-256 in `src/tableau_extract/data/README.md`; prüfen mit Test „400 eindeutige ags5“
-- [ ] 4.3 `regions.py`: Schlüssel normalisieren (D6), Gebietsstand ableiten, Namensabgleich (Umlaute, Zusätze), Mehrdeutigkeit → Fehler mit Kandidaten, Vollständigkeit (fehlend/überzählig/doppelt); prüfen mit `tests/test_regions.py` (`8111`→`08111`, `9764000`→`09764`, „Ahrweiler, Landkreis“, „Muenchen, Landkreis“, mehrdeutiger Name → Exit-3-Fehler, 398 Kreise → Warnung mit Liste)
+- [ ] 4.3 `regions.py`: Schlüssel normalisieren (D6), Gebietsstand ableiten, Namensabgleich (Umlaute, Zusätze), Mehrdeutigkeit → Fehler mit Kandidaten, Vollständigkeit (fehlend/überzählig/doppelt), Referenz-Suchreihenfolge `--referenz` → `./config/` → Paket mit Herkunft in den Metadaten (`importlib.resources`); prüfen mit `tests/test_regions.py` (`8111`→`08111`, `9764000`→`09764`, „Ahrweiler, Landkreis“, „Muenchen, Landkreis“, mehrdeutiger Name → Exit-3-Fehler, 398 Kreise → Warnung mit Liste, Projektdatei hat Vorrang vor Paket, ohne `config/` → `referenz = paket`)
 
 ## 5. Extraktionswege
 
@@ -30,6 +30,7 @@
 - [ ] 5.3 Wege C/D `methods/browser.py`: eine Playwright-Sitzung, `bootstrapSession` mitschneiden (D), Download-Menü auf „Daten“/„Kreuztabelle“ prüfen und protokollieren (C), ohne Playwright sauberer Fehlversuch; prüfen mit Test „Playwright fehlt → Protokolleintrag“ und Parser-Test auf mitgeschnittener Fixture
 - [ ] 5.4 Orchestrierung: Reihenfolge A→B→C→D, `--method`, Abbruch beim ersten Erfolg, alle gescheitert → `BlockedError` mit Bericht; prüfen mit Tests (A 404 + B ok → `vizql` mit Protokoll A; alle 403 → Exit 2, kein `kreise.csv`, `latest` unverändert)
 - [ ] 5.5 `--all-filters`: je Filterwert Abzug ziehen (Weg B/D), Filterspalten ergänzen; prüfen mit synthetischer Fixture (2 Filterwerte → doppelte Zeilenzahl + Spalte)
+- [ ] 5.6 Offline-Wiederholung `--replay`/`TABLEAU_EXTRACT_REPLAY`: Rohdateien aus `raw/` laden, gleicher Parser, `method = replay`, keine Netzwerkanfrage, fehlende Dateien → Exit 1; prüfen mit Tests (Replay der Fixture ergibt dieselbe Tabelle wie Weg B; `responses` meldet null Aufrufe; leerer Ordner → Fehler mit erwarteten Dateinamen)
 
 ## 6. Ausgabe, Fingerabdruck, Änderungserkennung
 
@@ -38,16 +39,30 @@
 
 ## 7. CLI, API, Gegenprobe
 
-- [ ] 7.1 `api.py`: `extract(url, **opts) -> ExtractResult` (DataFrame, Metadaten, Pfade, Status `neu`/`unverändert`); prüfen mit Test gegen gemockten Weg B
-- [ ] 7.2 `cli.py`: alle Optionen (`--sheet`, `--all-filters`, `--out`, `--list`, `--method`, `--check-sum`, `--check-field`, `--gebietsstand`, `--timeout`, `--quiet`), Umgebungsvariablen, Exit-Codes 0/1/2/3; prüfen mit `tests/test_cli.py` (`--list` schreibt nichts; ungültige URL → 1; gesperrt → 2; mehrdeutig → 3; `TABLEAU_EXTRACT_OUT`)
+- [ ] 7.1 `api.py`: `extract(url, **opts) -> ExtractResult` (DataFrame, Metadaten, Pfade, Status `neu`/`unverändert`) und `list_view(url) -> ViewListing`, beide mit `_repr_html_`/`__repr__` als kompakte Zusammenfassung (ohne Datenzeilen), Ausnahmen mit `exit_code`; Export in `__init__`; prüfen mit Tests gegen gemockten Weg B (HTML enthält Status/Weg/Blatt/Zeilen/Pfad, keine 400 Zeilen; gesperrt → Ausnahme mit `exit_code = 2`)
+- [ ] 7.2 `cli.py`: alle Optionen (`--sheet`, `--all-filters`, `--out`, `--list`, `--method`, `--check-sum`, `--check-field`, `--gebietsstand`, `--referenz`, `--replay`, `--timeout`, `--quiet`), Umgebungsvariablen, Exit-Codes 0/1/2/3; prüfen mit `tests/test_cli.py` (`--list` schreibt nichts; ungültige URL → 1; gesperrt → 2; mehrdeutig → 3; `TABLEAU_EXTRACT_OUT`)
 - [ ] 7.3 Gegenprobe `--check-sum`/`--check-field`: Summe, Abweichung in %, Eintrag in `meta.json`; prüfen mit Test (BBSR-Fixture, Soll 320000 → −1,1 %)
 
-## 8. Dokumentation und Abschluss
+## 8. Nutzung im Jupyter-Notebook
 
-- [ ] 8.1 README an das tatsächliche Verhalten anpassen (Status-Hinweis „in Planung“ und `[geplant]`-Marken entfernen, Beispielausgaben durch echte ersetzen, Diagramme aktuell halten), `LICENSE` (MIT), `CHANGELOG.md` anlegen; prüfen, dass die README-Befehle so laufen und die Mermaid-Diagramme fehlerfrei rendern
-- [ ] 8.2 Live-Test `tests/test_live.py` (`@pytest.mark.live`): BBSR-URL → 400 Zeilen, gültige `ags5`, Summe innerhalb ±5 % von 320 000, zweiter Lauf „unverändert“; lokal ausführen mit `uv run pytest -m live`
-- [ ] 8.3 Integrationsprüfung: `uv run ruff check && uv run ruff format --check && uv run mypy src && uv run pytest`, `openspec validate add-tableau-extract --strict` grün, CI grün
-- [ ] 8.4 Akzeptanz: echter Lauf `tableau-extract "<BBSR-URL>"` lokal, 5 Kreise mit den Tooltip-Werten der Karte abgleichen (z. B. Berlin, Bonn, Rhein-Sieg-Kreis, Ahrweiler, Erzgebirgskreis) und als Tabelle in die PR-Beschreibung; zweiter Lauf meldet „unverändert“
+- [ ] 8.1 Wheel-Inhalt absichern: Test baut das Wheel (`uv build`), installiert es in eine frische venv und ruft dort in einem leeren Ordner `extract(..., replay=<fixture>)` auf; prüfen, dass `kreise_2023.csv` im Wheel liegt und die Vollständigkeitsprüfung `referenz = paket` meldet
+- [ ] 8.2 `notebooks/beispiel_raw/` mit der gekürzten BBSR-Antwort (identisch zur Test-Fixture, Gleichheitstest) und `notebooks/schnellstart.ipynb` (Installationszelle mit Tag `skip-ci`, `list_view`, `extract`, zweiter Lauf „unverändert“, pandas-Auswertung, Gegenprobe); prüfen durch lokale Ausführung mit `nbclient` mit und ohne `TABLEAU_EXTRACT_REPLAY`
+- [ ] 8.3 Workflow `.github/workflows/notebook.yml` (Pfade `src/`, `notebooks/`, `pyproject.toml`; Wheel bauen, frische venv mit `ipykernel` + `nbclient`, Notebook mit Replay ausführen, `skip-ci`-Zellen überspringen, ausgeführtes Notebook als Artefakt); `nbclient`/`ipykernel` in die Dev-Gruppe; prüfen mit grünem Lauf und absichtlich kaputter Zelle → rot (lokal mit `act` oder per Test-Branch)
+- [ ] 8.4 README-Abschnitt „Im Jupyter-Notebook“ (Installationszelle per Tag, `[browser]`-Extra mit `playwright install chromium`, Beispielzellen, Hinweis „nur von Privatanschluss/Homelab, nicht Colab“, Replay); prüfen, dass die Zellen dem Beispiel-Notebook entsprechen
+
+## 9. Veröffentlichung (nach Freigabe, siehe design.md D13)
+
+- [ ] 9.1 Probe-Skript speichert keine IP-Adresse und keinen Rechnernamen mehr, nur die Einstufung „Privatanschluss“/„Rechenzentrum“; `probe/results/*/result.json` entsprechend bereinigen; prüfen mit `git grep` auf IP-Muster und Rechnernamen (keine Treffer)
+- [ ] 9.2 Je nach Entscheidung (b) oder (c): bei (c) Historie aller Branches bereinigen (`git filter-repo`), Force-Push auf `main` und `feat/tableau-extract`; prüfen mit `git log --all -p | grep` auf IP und Rechnernamen (keine Treffer)
+- [ ] 9.3 Repo nach ausdrücklicher Freigabe öffentlich stellen; prüfen mit `%pip install "git+https://github.com/trosinde/tableau-extract.git@feat/tableau-extract"` in einer frischen venv ohne Zugangsdaten
+
+## 10. Dokumentation und Abschluss
+
+- [ ] 10.1 README an das tatsächliche Verhalten anpassen (Status-Hinweis „in Planung“ und `[geplant]`-Marken entfernen, Beispielausgaben durch echte ersetzen, Diagramme aktuell halten), `LICENSE` (MIT), `CHANGELOG.md` anlegen; prüfen, dass die README-Befehle so laufen und die Mermaid-Diagramme fehlerfrei rendern
+- [ ] 10.2 Live-Test `tests/test_live.py` (`@pytest.mark.live`): BBSR-URL → 400 Zeilen, gültige `ags5`, Summe innerhalb ±5 % von 320 000, zweiter Lauf „unverändert“, Beispiel-Notebook live ohne Replay; lokal ausführen mit `uv run pytest -m live`
+- [ ] 10.3 Integrationsprüfung: `uv run ruff check && uv run ruff format --check && uv run mypy src && uv run pytest`, `openspec validate add-tableau-extract --strict` grün, CI und Notebook-Workflow grün
+- [ ] 10.4 Akzeptanz: echter Lauf `tableau-extract "<BBSR-URL>"` lokal, 5 Kreise mit den Tooltip-Werten der Karte abgleichen (z. B. Berlin, Bonn, Rhein-Sieg-Kreis, Ahrweiler, Erzgebirgskreis) und als Tabelle in die PR-Beschreibung; zweiter Lauf meldet „unverändert“
+- [ ] 10.5 Release 0.1.0: Version in `pyproject.toml`/`__init__`, CHANGELOG-Eintrag, nach dem Merge Tag `v0.1.0` auf `main`; prüfen mit `%pip install "git+https://github.com/trosinde/tableau-extract.git@v0.1.0"` in einem frischen Kernel und Ausführen des Beispiel-Notebooks
 
 ## Workflow follow-up
 

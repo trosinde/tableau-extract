@@ -2,7 +2,7 @@
 
 Holt die **Daten hinter einer Tableau-Karte** (z. B. BBSR-Wohnungsneubaubedarf je Landkreis) und legt sie als Tabelle ab: eine Zeile je Kreis, Werte exakt wie im Tableau-Datenmodell, nicht von Farben oder Tooltips abgelesen.
 
-> **Status:** in Planung. Die Spezifikation ist fertig und freigabebereit (`openspec/changes/add-tableau-extract/`), der Code ist noch nicht umgesetzt. Die Befehle unten beschreiben das **geplante** Verhalten. Was bereits funktioniert, ist die Zugangsprüfung in `probe/`.
+> **Status:** in Umsetzung (Branch `feat/tableau-extract`, Spezifikation unter `openspec/changes/add-tableau-extract/`). Die Befehle unten beschreiben das **geplante** Verhalten. Was bereits funktioniert, ist die Zugangsprüfung in `probe/`.
 
 ## Auf einen Blick
 
@@ -24,13 +24,59 @@ flowchart LR
 
 ## Installation
 
+**Im Jupyter-Notebook** (JupyterLab oder VS Code, Python ≥ 3.11), sobald das Repo öffentlich und `v0.1.0` getaggt ist:
+
+```python
+%pip install "git+https://github.com/trosinde/tableau-extract.git@v0.1.0"
+```
+
+Mit Browser-Rückfallweg (nur nötig, wenn der direkte Abruf scheitert):
+
+```python
+%pip install "tableau-extract[browser] @ git+https://github.com/trosinde/tableau-extract.git@v0.1.0"
+!playwright install chromium
+```
+
+**Für die Entwicklung:**
+
 ```bash
 git clone https://github.com/trosinde/tableau-extract.git
 cd tableau-extract
-uv sync                                    # Grundinstallation (Weg A + B)
-uv sync --extra browser                    # optional: Browser-Rückfallweg (Playwright)
-uv run playwright install chromium         # nur mit --extra browser
+uv sync --all-groups               # inkl. Tests, Lint, Notebook-Werkzeuge
+uv sync --extra browser            # optional: Playwright
 ```
+
+Die Kreis-Referenzliste wird mitinstalliert. Eine eigene Fassung unter `./config/kreise_<JJJJ>.csv` hat Vorrang.
+
+## Im Jupyter-Notebook
+
+```python
+from tableau_extract import extract, list_view
+
+URL = "https://tableau.bbsr.bund.de/t/bbr/views/Wohnungsneubaubedarfe_insgesamt_2023_bis_2030pa_krs_FINAL/DWohnungsneubaubedare_insgesamt"
+
+list_view(URL)            # Blätter, Felder mit Rollen, Filter
+r = extract(URL, out="out/", check_sum=320_000)
+r                         # kompakte Zusammenfassung: Status, Weg, Blatt, Zeilen, Vollständigkeit, Pfad
+```
+
+| Feld | Wert |
+|---|---|
+| Status | neu |
+| Weg | vizql |
+| Blatt | Karte |
+| Zeilen | 400 (400/400 Kreise, Gebietsstand 2023) |
+| Gegenprobe | 316 490 statt 320 000 (−1,1 %) |
+| Pfad | out/bbr-…/20261024T120000Z_3fa9c2d1 |
+
+```python
+r.df.nlargest(5, "p_wohnungsneubaubedarf_2330_we_pa_je_10000ew")
+extract(URL, out="out/").status    # "unverändert": nichts neu geschrieben
+```
+
+- Läuft nur von einem Privatanschluss oder im Homelab, **nicht in Google Colab** oder anderen Cloud-Notebooks (die Quelle sperrt Rechenzentren).
+- Ein Beispiel-Notebook liegt unter [`notebooks/schnellstart.ipynb`](notebooks/schnellstart.ipynb). CI führt es bei jeder Änderung vollständig aus, mit einer aufgezeichneten Antwort (`TABLEAU_EXTRACT_REPLAY`), weil GitHub Actions die Quelle nicht erreicht.
+- Frühere Läufe lassen sich ohne Netzwerk neu auswerten: `extract(URL, replay="out/<slug>/latest/raw")`.
 
 ## Verwendung
 
@@ -102,6 +148,8 @@ res.path        # Ausgabeordner
 | `--out out/` | Basisverzeichnis (alternativ `TABLEAU_EXTRACT_OUT`) |
 | `--check-sum 320000 --check-field <spalte>` | Summe über alle Kreise gegen Sollwert prüfen, Abweichung in % |
 | `--gebietsstand 2023` | Referenzliste der Kreise erzwingen |
+| `--referenz <datei>` | eigene Referenzliste verwenden |
+| `--replay <raw-ordner>` | gespeicherte Rohantworten neu auswerten, ohne Abruf (alternativ `TABLEAU_EXTRACT_REPLAY`) |
 
 ### Exit-Codes
 
@@ -162,7 +210,7 @@ sequenceDiagram
     end
 ```
 
-Details und weitere Diagramme: [design.md](openspec/changes/add-tableau-extract/design.md).
+Details und weitere Diagramme (auch zur Installation im Notebook): [design.md](openspec/changes/add-tableau-extract/design.md).
 
 ## In einer DVC-Pipeline
 
@@ -186,7 +234,8 @@ stages:
 ```
 src/tableau_extract/   Paket (CLI, API, Wege, Parser, Normalisierung)   [geplant]
 tests/                 Tests ohne Netzwerk + Fixtures; Live-Test mit -m live   [geplant]
-src/tableau_extract/data/  Kreis-Referenzlisten (Destatis)   [geplant]
+src/tableau_extract/data/  Kreis-Referenzlisten (Destatis, mitinstalliert)   [geplant]
+notebooks/             Beispiel-Notebook, in CI ausgeführt   [geplant]
 probe/                 Zugangsprüfung (Schritt 0)   [vorhanden]
 docs/zugangsbericht.md Ergebnis der Zugangsprüfung   [vorhanden]
 openspec/              Spezifikation (OpenSpec)   [vorhanden]

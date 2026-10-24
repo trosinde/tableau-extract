@@ -40,7 +40,8 @@ Motivation siehe `proposal.md`. Grundlage sind die Befunde aus `docs/zugangsberi
 
 - Interaktion mit der Viz über `--all-filters` hinaus (Auswahl, Drill-down, Paginierung).
 - Geometrien ausgeben. Sie werden zur Blattwahl genutzt, aber nicht in `kreise.csv` geschrieben, weil sie für Kreiswerte unnötig und sehr groß sind.
-- Betrieb in der Cloud: CloudFront-Sperre, siehe Zugangsbericht.
+- Live-Betrieb in der Cloud: CloudFront-Sperre, siehe Zugangsbericht.
+- Kein PyPI-Paket, keine Anpassungen für Colab oder JupyterHub (Colab läuft ohnehin in Rechenzentren und wäre gesperrt).
 - Weg C (Crosstab-Download) bis zum echten Download ausbauen. Er prüft nur, ob „Daten“ oder „Kreuztabelle“ angeboten werden, und protokolliert das. Der Ausbau folgt erst, wenn eine Ansicht das freigibt.
 
 ## Diagramme
@@ -272,7 +273,7 @@ flowchart TD
     FP -->|nein| E0b(["Exit 0: neuer Ordner"])
 ```
 
-- `argparse`; die Optionen entsprechen dem Auftrag, ergänzt um `--check-field`, `--gebietsstand`, `--timeout` und `--quiet`.
+- `argparse`; die Optionen entsprechen dem Auftrag, ergänzt um `--check-field`, `--gebietsstand`, `--referenz`, `--replay`, `--timeout` und `--quiet`.
 - Umgebungsvariablen: `TABLEAU_EXTRACT_OUT`, `TABLEAU_EXTRACT_USER_AGENT`, `TABLEAU_EXTRACT_MIN_INTERVAL`.
 - Exit-Codes:
 
@@ -294,13 +295,113 @@ flowchart TD
 - HTTP wird mit `responses` gemockt, ohne Netzwerk.
 - Ein Live-Test `@pytest.mark.live` läuft standardmäßig nicht und prüft die BBSR-URL (400 Zeilen, Summe ±5 % von 320 000).
 
+### D12 Nutzung im Jupyter-Notebook
+
+Vorbild ist `demografie-fetch` (Change `add-notebook-usage`). Installation und Nutzung sollen in beiden Projekten gleich aussehen.
+
+```mermaid
+flowchart LR
+    subgraph nb["Jupyter-Notebook (lokal)"]
+        c1["%pip install git+…@v0.1.0"]
+        c2["from tableau_extract import extract, list_view"]
+    end
+    gh[("GitHub-Repo, öffentlich<br/>Tag v0.1.0")]
+    subgraph pkg["installiertes Paket tableau_extract"]
+        api["extract · list_view"]
+        res["data/<br/>kreise_2023.csv"]
+        look["Referenz-Suche<br/>Pfad → ./config → Paket"]
+    end
+    proj[("Notebook-Ordner<br/>config/ (optional)<br/>out/")]
+    tab[("Tableau Server<br/>tableau.bbsr.bund.de")]
+    c1 --> gh --> pkg
+    c2 --> api --> look
+    look --> proj
+    look --> res
+    api --> tab
+    api --> proj
+```
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor N as Nutzer
+    participant K as Jupyter-Kernel
+    participant G as GitHub
+    participant P as tableau_extract
+    participant T as Tableau Server
+    N->>K: %pip install "git+https://github.com/trosinde/tableau-extract.git@v0.1.0"
+    K->>G: Quellstand zum Tag (ohne Zugangsdaten)
+    alt Python < 3.11
+        K-->>N: Abbruch: requires-python >= 3.11
+    else
+        K->>K: bauen und installieren (inkl. data/)
+    end
+    N->>P: list_view(url)
+    P->>T: Ansicht laden, bootstrapSession
+    P-->>N: Blätter, Felder, Rollen, Filter
+    N->>P: r = extract(url)
+    P->>T: Abruf (ein bootstrapSession)
+    P-->>N: ExtractResult als HTML (Status neu, 400 Zeilen)
+    N->>P: r.df
+    N->>P: extract(url)
+    P->>T: Abruf
+    P-->>N: Status unverändert, nichts geschrieben
+```
+
+- **Paketdaten** unter `src/tableau_extract/data/`, gelesen mit `importlib.resources.files`. Hatchling nimmt sie automatisch ins Wheel auf; ein Test baut das Wheel und prüft, dass `kreise_2023.csv` darin liegt.
+- **Suchreihenfolge der Referenzliste:** `--referenz <pfad>`, dann `./config/kreise_<JJJJ>.csv`, dann Paket. Die Herkunft steht in `meta.json`. *Alternative „nur Paket“* verworfen, weil sich die Liste dann im Projekt nicht übersteuern ließe (z. B. für einen neuen Gebietsstand vor dem nächsten Release).
+- **Installation per Git-Tag** statt Branch, damit ein Notebook reproduzierbar dieselbe Version nutzt. `%pip` statt `!pip`, damit in die Umgebung des laufenden Kernels installiert wird.
+- **`ExtractResult`** ist eine Dataclass mit `status`, `df`, `meta`, `path`, `method`, `sheet`. `_repr_html_` und `__repr__` geben eine kompakte Tabelle aus. `list_view` liefert ein `ViewListing` mit eigener `_repr_html_`.
+- **Offline-Wiederholung (Weg „replay“):** `--replay <ordner>` bzw. `TABLEAU_EXTRACT_REPLAY` liest die Rohdateien aus `raw/` eines früheren Laufs (`bootstrapSession*.txt` bzw. `view.csv`) und übergibt sie demselben Parser. Das ersetzt die Wege A–D vollständig, es gibt keine Netzwerkanfrage. Zweck:
+  - Notebook in CI trotz CloudFront-Sperre ausführen.
+  - Ältere Läufe nach einer Parser-Korrektur neu auswerten.
+
+  *Alternative:* selbstgehosteter GitHub-Runner im Homelab, der die Quelle live abruft. Möglich, aber eine zusätzliche Infrastruktur, die gepflegt werden muss; als spätere Ergänzung offen.
+
+```mermaid
+sequenceDiagram
+    participant A as GitHub Actions (notebook)
+    participant V as frische venv
+    participant J as nbclient
+    A->>A: uv build (Wheel)
+    A->>V: Wheel + ipykernel + nbclient installieren
+    A->>J: schnellstart.ipynb ausführen<br/>TABLEAU_EXTRACT_REPLAY=notebooks/beispiel_raw<br/>Installationszelle (Tag skip-ci) übersprungen
+    J->>J: list_view, extract, extract (unverändert), pandas
+    alt Zelle wirft Fehler
+        J-->>A: Workflow rot
+    else
+        J-->>A: grün, ausgeführtes Notebook als Artefakt
+    end
+```
+
+- **CI-Workflow `notebook.yml`** für Pushes und Pull Requests, die `src/`, `notebooks/` oder `pyproject.toml` ändern. `notebooks/beispiel_raw/` enthält die gekürzte BBSR-Antwort aus den Test-Fixtures (gleiche Datei, ein Test prüft die Gleichheit).
+
+### D13 Veröffentlichung des Repos (Entscheidungspunkt)
+
+Prüfung vom 24.10.2026, alle Commits auf allen Branches:
+
+- `probe/results/lokal/result.json` enthält die **öffentliche IP-Adresse des Privatanschlusses** und den **Rechnernamen**, seit dem ersten Commit `c206ce0`.
+- `probe/results/cloud/result.json` enthält IP und Namen des GitHub-Runners (unkritisch).
+- Alle Commits nennen `Thorsten Rosin <thorsten.rosin@gmail.com>` als Autor.
+- Keine Tokens, keine Passwörter. `uv.lock` und `.claude/` enthalten keine lokalen Pfade.
+
+Optionen:
+
+- (a) So veröffentlichen.
+- (b) IP und Rechnernamen aus den Dateien entfernen; das Probe-Skript speichert sie künftig nicht mehr, sondern nur die Einstufung „Privatanschluss“ bzw. „Rechenzentrum“. In der Historie bleiben sie sichtbar.
+- (c) Wie (b), dazu die Historie vor der Veröffentlichung neu schreiben (Force-Push auf `main` und `feat/tableau-extract`). Da es noch keine Pull Requests, Forks oder andere Nutzer gibt, kostet das hier wenig.
+
+**Empfehlung: (c).** Anders als bei `demografie-fetch` steht hier eine IP-Adresse drin, und die Historie ist noch jung und privat. Die Mailadresse bleibt; für künftige Commits kann die GitHub-noreply-Adresse verwendet werden. Die Sichtbarkeit wird erst nach der Freigabe umgestellt.
+
 ## Risks / Trade-offs
 
 - **Tableau ändert das VizQL-Format** → Der Parser prüft die erwarteten Schlüssel und scheitert mit einer klaren Meldung statt mit Teil-Daten. Fixtures fangen Regressionen; der Live-Test zeigt Formatwechsel.
 - **Weg B braucht Browser-Kontext** (Token aus JavaScript) → Weg D als Rückfall; der Grund steht im Protokoll.
 - **Formatierte Aliase sind gerundet bzw. formatiert** → Wir liefern sie wie im Modell und vermerken `quelle_wert = formatierter_alias` je Feld in `meta.json`. Genauere Werte gibt diese Ansicht nicht her.
 - **Rollenerkennung irrt** (z. B. eine Kennzahl als Schlüssel) → Die Vollständigkeitsprüfung schlägt dann an; `--list` zeigt die Rollen. Der Schlüssel lässt sich bei Bedarf mit einer Option erzwingen (spätere Erweiterung, nicht in diesem Change).
-- **Kein Lauf aus GitHub Actions möglich** → Betrieb lokal bzw. im Homelab; dokumentiert in der README.
+- **Kein Live-Lauf aus GitHub Actions möglich** → Betrieb lokal bzw. im Homelab; CI nutzt die Offline-Wiederholung. Dokumentiert in der README.
+- **Notebook in CI prüft nicht den Live-Abruf** → Der Live-Test (`pytest -m live`) führt lokal zusätzlich das Notebook ohne Replay aus.
+- **Öffentliches Repo macht die Nutzung der VizQL-Schnittstelle sichtbar** → eigene ehrliche Kennung, Drossel, ein Abruf je Lauf; die README nennt das offen.
 - **Ein Abruf je Lauf, auch wenn unverändert** (ca. 4 MB) → bei der vorgesehenen Frequenz (Pipeline-Lauf, nicht minütlich) unkritisch und durch die Drosselung höflich.
 
 ## Migration Plan
