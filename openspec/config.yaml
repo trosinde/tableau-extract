@@ -1,0 +1,48 @@
+schema: spec-driven
+
+context: |
+  Language: de
+  All artifacts must be written in de.
+  Keep OpenSpec structural headings and SHALL/MUST keywords in English.
+
+  Zweck: tableau-extract liest aus der URL einer Tableau-Kartenansicht die
+  zugrunde liegenden Daten je Landkreis exakt (wie im Tableau-Datenmodell) und
+  legt sie als CSV/Parquet mit meta.json ab. Abrufstufe einer reproduzierbaren
+  Pipeline (DVC, Parquet). Erstes Ziel: BBSR-Karte Wohnungsneubaubedarfe
+  2023-2030 auf tableau.bbsr.bund.de.
+
+  Stack: Python >= 3.11, uv, Paket tableau_extract (src-Layout), requests,
+  pandas/pyarrow, Playwright (nur Rückfallweg), pytest, ruff, mypy,
+  GitHub Actions (nur Lint + Offline-Tests).
+
+  Konventionen:
+  - Werte nie aus Farben, Bildern, Tooltips oder OCR ableiten, nie schätzen.
+  - Keine Umgehung von Login, Sperren, CAPTCHAs, Zustimmungsdialogen, Rate-Limits.
+  - Höflich abrufen: eigener User-Agent, max. 1 Anfrage/s, Backoff.
+  - Konfiguration nur über CLI/Umgebungsvariablen, keine Zugangsdaten im Code.
+  - Tests ohne Netzwerk mit Fixtures; Live-Tests nur mit @pytest.mark.live.
+  - Zugangslage siehe docs/zugangsbericht.md (Einstufung A-lokal: Cloud-IPs
+    erhalten 403 von CloudFront, View-CSV-Export und Daten-Download gesperrt,
+    VizQL bootstrapSession liefert das Datenwörterbuch).
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always state what is out of scope
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
+
+# Per-operation guidance (optional)
+# Add advisory guidance for how apply and archive work should be conducted.
+# This is separate from artifact rules above.
+# Example:
+#   operations:
+#     apply:
+#       guidance:
+#         - Keep test summaries concise
+#     archive:
+#       guidance:
+#         - Summarize the archive outcome before finishing
