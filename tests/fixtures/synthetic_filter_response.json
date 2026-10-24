@@ -1,0 +1,242 @@
+{
+ "vqlCmdResponse": {
+  "layoutStatus": {
+   "applicationPresModel": {
+    "dataDictionary": {
+     "dataSegments": {
+      "1": {
+       "dataColumns": [
+        {
+         "dataType": "integer",
+         "dataValues": [
+          8111,
+          9162,
+          7131,
+          1001
+         ]
+        },
+        {
+         "dataType": "cstring",
+         "dataValues": [
+          "Stuttgart, Stadtkreis",
+          "München, Kreisfreie Stadt",
+          "Ahrweiler, Landkreis",
+          "Flensburg, Stadt",
+          "2.000",
+          "1.500,25",
+          "*",
+          "900",
+          "15 bis unter 30",
+          "30 bis unter 45",
+          "bis unter 15",
+          "45 und mehr"
+         ]
+        },
+        {
+         "dataType": "real",
+         "dataValues": [
+          0.5,
+          1.0,
+          0.2,
+          0.3
+         ]
+        },
+        {
+         "dataType": "spatial",
+         "dataValues": [
+          "GEOGRAPHY('POINT(0 0)')",
+          "GEOGRAPHY('POINT(0 0)')",
+          "GEOGRAPHY('POINT(0 0)')",
+          "GEOGRAPHY('POINT(0 0)')"
+         ]
+        }
+       ]
+      }
+     }
+    },
+    "workbookPresModel": {
+     "dashboardPresModel": {
+      "zones": {
+       "1": {
+        "worksheet": "Karte",
+        "presModelHolder": {
+         "visual": {
+          "filtersJson": "[{\"worksheet\": \"Karte\", \"table\": {\"schema\": [{\"caption\": \"Zeitraum\", \"name\": [\"ds\", \"none:Zeitraum:nk\"], \"ordinal\": 0}], \"tuples\": [{\"t\": [{\"v\": \"2023-2030\"}], \"s\": false}, {\"t\": [{\"v\": \"2031-2040\"}], \"s\": true}]}, \"all\": false}]",
+          "vizData": {
+           "paneColumnsData": {
+            "vizDataColumns": [
+             {
+              "paneIndices": [
+               0
+              ],
+              "columnIndices": [
+               6
+              ]
+             },
+             {
+              "fieldCaption": "Kreisschlüssel",
+              "dataType": "integer",
+              "paneIndices": [
+               0
+              ],
+              "columnIndices": [
+               0
+              ],
+              "fn": "[ds].[Kreisschlüssel]"
+             },
+             {
+              "fieldCaption": "Kreis",
+              "dataType": "cstring",
+              "paneIndices": [
+               0
+              ],
+              "columnIndices": [
+               1
+              ],
+              "fn": "[ds].[Kreis]"
+             },
+             {
+              "fieldCaption": "SUM(Bedarf (Round))",
+              "dataType": "real",
+              "paneIndices": [
+               0
+              ],
+              "columnIndices": [
+               2
+              ],
+              "fn": "[ds].[SUM(Bedarf (Round))]"
+             },
+             {
+              "fieldCaption": "SUM(Quote)",
+              "dataType": "real",
+              "paneIndices": [
+               0
+              ],
+              "columnIndices": [
+               3
+              ],
+              "fn": "[ds].[SUM(Quote)]"
+             },
+             {
+              "fieldCaption": "Bedarf je EW (Klassen)",
+              "dataType": "cstring",
+              "paneIndices": [
+               0
+              ],
+              "columnIndices": [
+               4
+              ],
+              "fn": "[ds].[Bedarf je EW (Klassen)]"
+             },
+             {
+              "fieldCaption": "COLLECT(Geometrie)",
+              "dataType": "spatial",
+              "paneIndices": [
+               0
+              ],
+              "columnIndices": [
+               5
+              ],
+              "fn": "[ds].[COLLECT(Geometrie)]"
+             }
+            ],
+            "paneColumnsList": [
+             {
+              "vizPaneColumns": [
+               {
+                "valueIndices": [
+                 4,
+                 5,
+                 6,
+                 7
+                ],
+                "aliasIndices": []
+               },
+               {
+                "valueIndices": [
+                 14,
+                 15,
+                 16,
+                 17
+                ],
+                "aliasIndices": []
+               },
+               {
+                "valueIndices": [],
+                "aliasIndices": [
+                 -19,
+                 -20,
+                 -21,
+                 -22
+                ]
+               },
+               {
+                "valueIndices": [
+                 4,
+                 5,
+                 6,
+                 7
+                ],
+                "aliasIndices": []
+               },
+               {
+                "valueIndices": [
+                 22,
+                 23,
+                 24,
+                 25
+                ],
+                "aliasIndices": []
+               },
+               {
+                "valueIndices": [
+                 4,
+                 5,
+                 6,
+                 7
+                ],
+                "aliasIndices": []
+               },
+               {
+                "valueIndices": [],
+                "aliasIndices": []
+               }
+              ]
+             }
+            ]
+           }
+          }
+         }
+        }
+       },
+       "2": {
+        "worksheet": "Legende",
+        "presModelHolder": {
+         "visual": {}
+        }
+       },
+       "3": {
+        "presModelHolder": {
+         "parameterControl": {
+          "fieldCaption": "Komponente",
+          "parameterName": "[Parameters].[Parameter 1]",
+          "formattedValues": [
+           "insgesamt",
+           "Ersatzbedarf"
+          ],
+          "formattedValue": "insgesamt"
+         }
+        }
+       },
+       "4": {
+        "presModelHolder": {
+         "dashboardText": {}
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

@@ -58,11 +58,16 @@ class Filter:
     values: list[str]
     selected: list[str]
     kind: str = "filter"  # "filter" | "parameter"
+    #: interner Feldname für Befehle (`[ds].[feld]` bzw. Parametername)
+    field: str = ""
+    worksheet: str | None = None
 
     def as_dict(self) -> dict[str, Any]:
         return {
             "name": self.name,
             "kind": self.kind,
+            "field": self.field,
+            "worksheet": self.worksheet,
             "values": self.values,
             "selected": self.selected,
         }
@@ -93,6 +98,7 @@ class ParsedView:
     sheets: dict[str, SheetTable]
     filters: list[Filter] = field(default_factory=list)
     locale: str | None = None
+    warnings: list[str] = field(default_factory=list)
 
 
 @dataclass

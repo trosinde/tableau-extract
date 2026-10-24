@@ -13,8 +13,8 @@
 
 ## 3. VizQL-Parser und Fixtures
 
-- [ ] 3.1 `tests/fixtures/make_fixture.py` schreiben und daraus `bbsr_bootstrap.txt` (Geometrie gekürzt, sonst unverändert) aus `probe/results/lokal/t5_bootstrapSession.txt` erzeugen; dazu synthetische Fixture `synthetic_bootstrap_de.txt` (de_DE, ein Filter, Sonderwerte `*`/`%null%`, Klassenfeld, 4-stellige Schlüssel); prüfen, dass beide Dateien < 1 MB sind und vom Parser gelesen werden
-- [ ] 3.2 `vizql_parse.py`: Längenpräfix-Segmente zerlegen, Datenwörterbuch nach Typ, Blätter und Felder je Blatt, `aliasIndices`/`valueIndices` inkl. negativer Indizes auflösen, `workbookLocale`, Filter/Parameter auslesen; klare Fehlermeldung bei unerwartetem Format; prüfen mit `tests/test_vizql_parse.py` (BBSR: Blätter `Karte`/`Impressum`, 400 Zeilen, Berlin `11000000`/`"23,000"`/`61.3`, Locale `en_US`; synthetisch: Filter erkannt; kaputte Eingabe → Fehler statt Teildaten)
+- [x] 3.1 `tests/fixtures/make_fixture.py` schreiben und daraus `bbsr_bootstrap.txt` (Geometrie gekürzt, sonst unverändert) aus `probe/results/lokal/t5_bootstrapSession.txt` erzeugen; dazu synthetische Fixture `synthetic_bootstrap_de.txt` (de_DE, ein Filter, Sonderwerte `*`/`%null%`, Klassenfeld, 4-stellige Schlüssel); prüfen, dass beide Dateien < 1 MB sind und vom Parser gelesen werden
+- [x] 3.2 `vizql_parse.py`: Längenpräfix-Segmente zerlegen, Datenwörterbuch nach Typ, Blätter und Felder je Blatt, `aliasIndices`/`valueIndices` inkl. negativer Indizes auflösen, `workbookLocale`, Filter/Parameter auslesen; klare Fehlermeldung bei unerwartetem Format; prüfen mit `tests/test_vizql_parse.py` (BBSR: Blätter `Karte`/`Impressum`, 400 Zeilen, Berlin `11000000`/`"23,000"`/`61.3`, Locale `en_US`; synthetisch: Filter erkannt; kaputte Eingabe → Fehler statt Teildaten)
 - [ ] 3.3 Blattauswahl (Geometrie/Schlüssel), `--sheet`, Rollenerkennung und Spaltennamen nach D5 inkl. Hinweis `(Round)`; prüfen mit Tests (automatische Wahl `Karte`, unbekanntes Blatt → Fehler mit Liste, `SUM(P Wohnungsneubaubedarf 2330 We Pa (Round))` → `p_wohnungsneubaubedarf_2330_we_pa`, Kollision → `_2`)
 
 ## 4. Normalisierung und Kreiszuordnung
