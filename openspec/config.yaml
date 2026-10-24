@@ -25,6 +25,13 @@ context: |
     erhalten 403 von CloudFront, View-CSV-Export und Daten-Download gesperrt,
     VizQL bootstrapSession liefert das Datenwörterbuch).
 
+rules:
+  design:
+    - Enthält Mermaid-Diagramme (```mermaid): mindestens ein Baustein-/Datenflussdiagramm und ein Sequenzdiagramm je wesentlichem Ablauf; bei Fehlerpfaden ein Entscheidungsdiagramm.
+    - Diagramme müssen fehlerfrei rendern (mermaid-cli) und zu Text und Specs passen.
+  tasks:
+    - Wenn sich Verhalten oder Ablauf ändert, gehört eine Aufgabe dazu, README und Diagramme nachzuziehen.
+
 # Per-artifact rules (optional)
 # Add custom rules for specific artifacts.
 # Example:

@@ -43,6 +43,114 @@ Motivation siehe `proposal.md`. Grundlage sind die Befunde aus `docs/zugangsberi
 - Betrieb in der Cloud: CloudFront-Sperre, siehe Zugangsbericht.
 - Weg C (Crosstab-Download) bis zum echten Download ausbauen. Er prüft nur, ob „Daten“ oder „Kreuztabelle“ angeboten werden, und protokolliert das. Der Ausbau folgt erst, wenn eine Ansicht das freigibt.
 
+## Diagramme
+
+### Bausteine und Datenfluss
+
+```mermaid
+flowchart TB
+    U["Eingabe: Tableau-View-URL"] --> URL["url.py<br/>prüfen + normalisieren"]
+    URL -->|keine Tableau-URL| X1(["Exit 1"])
+    URL --> ORCH["Orchestrierung<br/>Wege nacheinander versuchen"]
+
+    subgraph Wege["Extraktionswege (erster Erfolg gewinnt)"]
+        A["A View-CSV<br/>GET view.csv"]
+        B["B VizQL per HTTP<br/>startSession + bootstrapSession"]
+        C["C Download-Menü<br/>Daten / Kreuztabelle"]
+        D["D Netzwerkmitschnitt<br/>Playwright"]
+    end
+    ORCH --> A
+    A -->|gescheitert| B -->|gescheitert| C -->|gescheitert| D
+    Wege -.->|jeder Fehlversuch| LOG[("Versuchsprotokoll")]
+    D -->|alle gescheitert| X2(["Exit 2 + Bericht"])
+
+    A & B & D -->|RawCapture| P["vizql_parse.py<br/>Datenwörterbuch → Tabelle je Blatt"]
+    P --> S["Blattwahl + Feldrollen"]
+    S --> N["normalize.py<br/>Zahlen, Sonderwerte, Klassen"]
+    N --> R["regions.py<br/>ags5, Namensabgleich, Vollständigkeit"]
+    R -->|nicht eindeutig| X3(["Exit 3 + Bericht"])
+    R --> F["fingerprint.py<br/>SHA-256 der Daten"]
+    F --> CMP{"gleich wie<br/>latest?"}
+    CMP -->|ja| UNV(["„unverändert“, Exit 0<br/>nichts geschrieben"])
+    CMP -->|nein| O["output.py<br/>Ordner + latest"]
+    O --> OK(["Exit 0"])
+    LOG --> O
+```
+
+### Ablauf Weg B (VizQL per HTTP)
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Nutzer
+    participant CLI as tableau-extract
+    participant HTTP as Höflicher Client
+    participant CF as CloudFront
+    participant TS as Tableau Server
+
+    Nutzer->>CLI: tableau-extract "<url>"
+    CLI->>HTTP: Ladeseite holen
+    HTTP->>CF: GET /t/bbr/views/<wb>/<blatt>?:embed=y
+    alt Rechenzentrums-IP
+        CF-->>HTTP: 403
+        HTTP-->>CLI: Fehlversuch "403 CloudFront" (kein Retry)
+    else Privat-IP
+        CF->>TS: weiterleiten
+        TS-->>HTTP: 200 Ladeseite + Cookies + Sitzungsparameter
+        Note over HTTP: ≥ 1 s Pause
+        HTTP->>TS: POST /vizql/.../startSession/viewing
+        TS-->>HTTP: sessionid
+        Note over HTTP: ≥ 1 s Pause
+        HTTP->>TS: POST /vizql/.../bootstrapSession/sessions/<id>
+        TS-->>HTTP: 200, ca. 4 MB, mehrere JSON-Segmente mit Längenpräfix
+        HTTP-->>CLI: RawCapture (Rohbytes, workbookLocale)
+    end
+```
+
+### Gesamtlauf mit Änderungserkennung
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant CLI as tableau-extract
+    participant W as Wege A–D
+    participant P as Parser + Normalisierung
+    participant FS as out/<slug>/
+
+    CLI->>W: Daten abrufen (genau ein Abruf)
+    W-->>CLI: RawCapture + Versuchsprotokoll
+    CLI->>P: parsen, normalisieren, Kreise zuordnen
+    P-->>CLI: Tabelle + Daten-Fingerabdruck
+    CLI->>FS: latest/meta.json lesen
+    alt Fingerabdruck gleich
+        CLI-->>CLI: Meldung "unverändert", Exit 0
+        Note over FS: nichts geschrieben, latest bleibt
+    else neu oder geändert
+        CLI->>FS: .tmp-<uuid>/ schreiben (CSV, Parquet, meta.json, raw/)
+        CLI->>FS: umbenennen zu <UTC>_<sha8>/
+        CLI->>FS: latest atomar umhängen
+        CLI-->>CLI: Exit 0
+    end
+```
+
+### Auflösung der Werte aus dem Datenwörterbuch
+
+```mermaid
+flowchart LR
+    subgraph Blatt["Blatt „Karte“ (paneColumnsData)"]
+        F1["Feld krsname23<br/>aliasIndices: 12, 13 …"]
+        F2["Feld SUM(… We Pa (Round))<br/>aliasIndices: -409, -410 …"]
+    end
+    subgraph DD["Datenwörterbuch (dataSegments)"]
+        CS["cstring[ ]<br/>… 'Memmingen' … '23,000' …"]
+        RE["real[ ]<br/>75.4, 77.1 …"]
+        IN["integer[ ]<br/>9764000 …"]
+    end
+    F1 -->|"Index ≥ 0 → Liste des Feldtyps"| CS
+    F2 -->|"Index < 0 → cstring[-i-1]<br/>(formatierter Alias)"| CS
+    CS --> L["Zahl nach workbookLocale<br/>en_US: '23,000' → 23000"]
+```
+
 ## Decisions
 
 ### D1 Aufbau: Abrufen → Rohdaten → Parsen → Normalisieren → Schreiben
@@ -97,7 +205,7 @@ Playwright ist das optionale Extra `tableau-extract[browser]`. Fehlt es, wird We
 | Klasse | Text mit Muster `bis unter`, `und mehr`, `–`, `<`, `>` oder Feldname endet auf `(Klassen)`/`(bins)` |
 | Geometrie | `spatial`, `Latitude/Longitude (generated)`, `COLLECT(...)`; wird nicht ausgegeben |
 
-**Spaltennamen:** Aggregation entfernen, Klammerzusätze wie `(Round)` entfernen, snake_case, bei Kollision ein Suffix `_2`. Beispiel: `SUM(P Wohnungsneubaubedarf 2330 We Pa (Round))` → `p_wohnungsneubaubedarf_2330_we_pa`. Der Originalname und der Hinweis „im Datenmodell gerundet“ (aus `(Round)`) stehen in `meta.json`.
+**Spaltennamen:** Aggregation entfernen, den Zusatz `(Round)` entfernen, andere Klammerzusätze (z. B. `(Klassen)`) als Wortteil behalten, snake_case, bei Kollision ein Suffix `_2`. Beispiel: `SUM(P Wohnungsneubaubedarf 2330 We Pa (Round))` → `p_wohnungsneubaubedarf_2330_we_pa`. Der Originalname und der Hinweis „im Datenmodell gerundet“ (aus `(Round)`) stehen in `meta.json`.
 
 `--list` zeigt die abgeleiteten Rollen, damit Fehlzuordnungen sichtbar sind.
 
@@ -150,6 +258,19 @@ Ein Abruf der `bootstrapSession` (ca. 4 MB) je Lauf ist daher nötig. Geschriebe
 - **Parquet:** `meta.json` liegt zusätzlich als Schema-Metadatum `tableau_extract` vor.
 
 ### D10 CLI, Exit-Codes, Konfiguration
+
+```mermaid
+flowchart TD
+    S([Start]) --> V{"URL gültig?"}
+    V -->|nein| E1(["Exit 1"])
+    V -->|ja| W{"Liefert ein Weg Daten?"}
+    W -->|nein| E2(["Exit 2: gesperrt, Bericht, keine Tabelle"])
+    W -->|ja| K{"Alle Zeilen eindeutig einem Kreis zugeordnet?"}
+    K -->|nein| E3(["Exit 3: Bericht, keine Tabelle"])
+    K -->|ja| FP{"Fingerabdruck = latest?"}
+    FP -->|ja| E0a(["Exit 0: unverändert"])
+    FP -->|nein| E0b(["Exit 0: neuer Ordner"])
+```
 
 - `argparse`; die Optionen entsprechen dem Auftrag, ergänzt um `--check-field`, `--gebietsstand`, `--timeout` und `--quiet`.
 - Umgebungsvariablen: `TABLEAU_EXTRACT_OUT`, `TABLEAU_EXTRACT_USER_AGENT`, `TABLEAU_EXTRACT_MIN_INTERVAL`.

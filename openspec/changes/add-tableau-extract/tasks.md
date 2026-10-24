@@ -44,7 +44,7 @@
 
 ## 8. Dokumentation und Abschluss
 
-- [ ] 8.1 README (Zweck, Installation mit/ohne `browser`-Extra, CLI-Beispiele, Exit-Codes, Ausgabeformat, Hinweis „gerundete Werte im Datenmodell“, Betrieb nur lokal wegen CloudFront, DVC-Stage-Beispiel), `LICENSE` (MIT), `CHANGELOG.md`; prüfen, dass die README-Befehle so laufen
+- [ ] 8.1 README an das tatsächliche Verhalten anpassen (Status-Hinweis „in Planung“ und `[geplant]`-Marken entfernen, Beispielausgaben durch echte ersetzen, Diagramme aktuell halten), `LICENSE` (MIT), `CHANGELOG.md` anlegen; prüfen, dass die README-Befehle so laufen und die Mermaid-Diagramme fehlerfrei rendern
 - [ ] 8.2 Live-Test `tests/test_live.py` (`@pytest.mark.live`): BBSR-URL → 400 Zeilen, gültige `ags5`, Summe innerhalb ±5 % von 320 000, zweiter Lauf „unverändert“; lokal ausführen mit `uv run pytest -m live`
 - [ ] 8.3 Integrationsprüfung: `uv run ruff check && uv run ruff format --check && uv run mypy src && uv run pytest`, `openspec validate add-tableau-extract --strict` grün, CI grün
 - [ ] 8.4 Akzeptanz: echter Lauf `tableau-extract "<BBSR-URL>"` lokal, 5 Kreise mit den Tooltip-Werten der Karte abgleichen (z. B. Berlin, Bonn, Rhein-Sieg-Kreis, Ahrweiler, Erzgebirgskreis) und als Tabelle in die PR-Beschreibung; zweiter Lauf meldet „unverändert“
