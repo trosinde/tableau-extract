@@ -48,8 +48,8 @@
 
 - [x] 8.1 Wheel-Inhalt absichern: Test baut das Wheel (`uv build`), installiert es in eine frische venv und ruft dort in einem leeren Ordner `extract(..., replay=<fixture>)` auf; prüfen, dass `kreise_2023.csv` im Wheel liegt und die Vollständigkeitsprüfung `referenz = paket` meldet
 - [x] 8.2 `notebooks/beispiel_raw/` mit der gekürzten BBSR-Antwort (identisch zur Test-Fixture, Gleichheitstest) und `notebooks/schnellstart.ipynb` (Installationszelle mit Tag `skip-ci`, `list_view`, `extract`, zweiter Lauf „unverändert“, pandas-Auswertung, Gegenprobe); prüfen durch lokale Ausführung mit `nbclient` mit und ohne `TABLEAU_EXTRACT_REPLAY`
-- [ ] 8.3 Workflow `.github/workflows/notebook.yml` (Pfade `src/`, `notebooks/`, `pyproject.toml`; Wheel bauen, frische venv mit `ipykernel` + `nbclient`, Notebook mit Replay ausführen, `skip-ci`-Zellen überspringen, ausgeführtes Notebook als Artefakt); `nbclient`/`ipykernel` in die Dev-Gruppe; prüfen mit grünem Lauf und absichtlich kaputter Zelle → rot (lokal mit `act` oder per Test-Branch)
-- [ ] 8.4 README-Abschnitt „Im Jupyter-Notebook“ (Installationszelle per Tag, `[browser]`-Extra mit `playwright install chromium`, Beispielzellen, Hinweis „nur von Privatanschluss/Homelab, nicht Colab“, Replay); prüfen, dass die Zellen dem Beispiel-Notebook entsprechen
+- [x] 8.3 Workflow `.github/workflows/notebook.yml` (Pfade `src/`, `notebooks/`, `pyproject.toml`; Wheel bauen, frische venv mit `ipykernel` + `nbclient`, Notebook mit Replay ausführen, `skip-ci`-Zellen überspringen, ausgeführtes Notebook als Artefakt); `nbclient`/`ipykernel` in die Dev-Gruppe; prüfen mit grünem Lauf und absichtlich kaputter Zelle → rot (lokal mit `act` oder per Test-Branch)
+- [x] 8.4 README-Abschnitt „Im Jupyter-Notebook“ (Installationszelle per Tag, `[browser]`-Extra mit `playwright install chromium`, Beispielzellen, Hinweis „nur von Privatanschluss/Homelab, nicht Colab“, Replay); prüfen, dass die Zellen dem Beispiel-Notebook entsprechen
 
 ## 9. Veröffentlichung (nach Freigabe, siehe design.md D13)
 
@@ -59,8 +59,8 @@
 
 ## 10. Dokumentation und Abschluss
 
-- [ ] 10.1 README an das tatsächliche Verhalten anpassen (Status-Hinweis „in Planung“ und `[geplant]`-Marken entfernen, Beispielausgaben durch echte ersetzen, Diagramme aktuell halten), `LICENSE` (MIT), `CHANGELOG.md` anlegen; prüfen, dass die README-Befehle so laufen und die Mermaid-Diagramme fehlerfrei rendern
-- [ ] 10.2 Live-Test `tests/test_live.py` (`@pytest.mark.live`): BBSR-URL → 400 Zeilen, gültige `ags5`, Summe innerhalb ±5 % von 320 000, zweiter Lauf „unverändert“, Beispiel-Notebook live ohne Replay; lokal ausführen mit `uv run pytest -m live`
+- [x] 10.1 README an das tatsächliche Verhalten anpassen (Status-Hinweis „in Planung“ und `[geplant]`-Marken entfernen, Beispielausgaben durch echte ersetzen, Diagramme aktuell halten), `LICENSE` (MIT), `CHANGELOG.md` anlegen; prüfen, dass die README-Befehle so laufen und die Mermaid-Diagramme fehlerfrei rendern
+- [x] 10.2 Live-Test `tests/test_live.py` (`@pytest.mark.live`): BBSR-URL → 400 Zeilen, gültige `ags5`, Summe innerhalb ±5 % von 320 000, zweiter Lauf „unverändert“, Beispiel-Notebook live ohne Replay; lokal ausführen mit `uv run pytest -m live`
 - [ ] 10.3 Integrationsprüfung: `uv run ruff check && uv run ruff format --check && uv run mypy src && uv run pytest`, `openspec validate add-tableau-extract --strict` grün, CI und Notebook-Workflow grün
 - [ ] 10.4 Akzeptanz: echter Lauf `tableau-extract "<BBSR-URL>"` lokal, 5 Kreise mit den Tooltip-Werten der Karte abgleichen (z. B. Berlin, Bonn, Rhein-Sieg-Kreis, Ahrweiler, Erzgebirgskreis) und als Tabelle in die PR-Beschreibung; zweiter Lauf meldet „unverändert“
 - [ ] 10.5 Release 0.1.0: Version in `pyproject.toml`/`__init__`, CHANGELOG-Eintrag, nach dem Merge Tag `v0.1.0` auf `main`; prüfen mit `%pip install "git+https://github.com/trosinde/tableau-extract.git@v0.1.0"` in einem frischen Kernel und Ausführen des Beispiel-Notebooks
