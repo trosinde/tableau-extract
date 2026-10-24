@@ -16,7 +16,6 @@ import argparse
 import json
 import platform
 import re
-import socket
 import sys
 import time
 from datetime import UTC, datetime
@@ -33,6 +32,7 @@ BROWSER_UA = (
 REFERER = "https://www.bbsr.bund.de/"
 TIMEOUT = 30
 PAUSE = 1.0  # höchstens 1 Anfrage pro Sekunde
+NETZ_DEFAULT = {"lokal": "Privatanschluss", "cloud": "Rechenzentrum (GitHub Actions)"}
 
 
 def normalize(url: str) -> str:
@@ -200,6 +200,7 @@ def main() -> int:
     ap.add_argument("--env", default="lokal", help="Kennung der Umgebung (lokal, cloud)")
     ap.add_argument("--out", default="probe/results")
     ap.add_argument("--skip-browser", action="store_true")
+    ap.add_argument("--netz", help="Art des Netzes, z. B. Privatanschluss oder Rechenzentrum")
     args = ap.parse_args()
 
     view = normalize(args.url)
@@ -228,17 +229,13 @@ def main() -> int:
     for r in results:
         r.pop("_response", None)
 
-    try:
-        ip = requests.get("https://api.ipify.org", timeout=10).text.strip()
-    except requests.RequestException:
-        ip = None
+    # Bewusst keine IP-Adresse und kein Rechnername: nur die Art des Netzes.
     report = {
         "env": args.env,
         "input_url": args.url,
         "view_url": view,
         "timestamp_utc": datetime.now(UTC).isoformat(timespec="seconds"),
-        "host": socket.gethostname(),
-        "public_ip": ip,
+        "netz": args.netz or NETZ_DEFAULT.get(args.env, "unbekannt"),
         "python": platform.python_version(),
         "results": results,
     }

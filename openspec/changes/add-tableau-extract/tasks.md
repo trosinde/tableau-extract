@@ -52,7 +52,7 @@
 
 ## 9. Veröffentlichung (nach Freigabe, siehe design.md D13)
 
-- [ ] 9.1 Probe-Skript speichert keine IP-Adresse und keinen Rechnernamen mehr, nur die Einstufung „Privatanschluss“/„Rechenzentrum“; `probe/results/*/result.json` entsprechend bereinigen; prüfen mit `git grep` auf IP-Muster und Rechnernamen (keine Treffer)
+- [x] 9.1 Probe-Skript speichert keine IP-Adresse und keinen Rechnernamen mehr, nur die Einstufung „Privatanschluss“/„Rechenzentrum“; `probe/results/*/result.json` entsprechend bereinigen; prüfen mit `git grep` auf IP-Muster und Rechnernamen (keine Treffer)
 - [ ] 9.2 Je nach Entscheidung (b) oder (c): bei (c) Historie aller Branches bereinigen (`git filter-repo`), Force-Push auf `main` und `feat/tableau-extract`; prüfen mit `git log --all -p | grep` auf IP und Rechnernamen (keine Treffer)
 - [ ] 9.3 Repo nach ausdrücklicher Freigabe öffentlich stellen; prüfen mit `%pip install "git+https://github.com/trosinde/tableau-extract.git@feat/tableau-extract"` in einer frischen venv ohne Zugangsdaten
 

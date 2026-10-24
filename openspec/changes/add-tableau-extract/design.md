@@ -393,6 +393,8 @@ Optionen:
 
 **Empfehlung: (c).** Anders als bei `demografie-fetch` steht hier eine IP-Adresse drin, und die Historie ist noch jung und privat. Die Mailadresse bleibt; für künftige Commits kann die GitHub-noreply-Adresse verwendet werden. Die Sichtbarkeit wird erst nach der Freigabe umgestellt.
 
+**Entscheidung (24.10.2026): (c)**, danach öffentlich. Für die Notebook-CI gilt die Offline-Wiederholung; ein Homelab-Runner ist nicht vorgesehen.
+
 ## Risks / Trade-offs
 
 - **Tableau ändert das VizQL-Format** → Der Parser prüft die erwarteten Schlüssel und scheitert mit einer klaren Meldung statt mit Teil-Daten. Fixtures fangen Regressionen; der Live-Test zeigt Formatwechsel.
