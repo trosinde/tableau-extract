@@ -2,7 +2,9 @@
 
 Gekürzt wird nur, was für die Daten unerheblich ist:
 - Geometrien (`spatial`-Werte) werden durch einen Platzhalter ersetzt,
-- die Render-Szene (`.../visual/scene`) der Kartenzone wird entfernt.
+- die Render-Szene (`.../visual/scene`) der Kartenzone wird entfernt,
+- Zugangstoken des Kartendienstes (z. B. Mapbox `pk.…`) werden ersetzt; sie gehören
+  dem Betreiber der Ansicht und nicht in ein Repo.
 Alle anderen Teile, insbesondere Datenwörterbuch und `paneColumnsData`, bleiben
 unverändert. Die Längenpräfixe werden neu berechnet.
 
@@ -34,10 +36,17 @@ def split_segments(text: str) -> list[Any]:
     return parts
 
 
+TOKEN = re.compile(r"\b(pk|sk|tk)\.eyJ[A-Za-z0-9._-]+")
+
+
+def scrub_tokens(text: str) -> str:
+    return TOKEN.sub("ENTFERNT", text)
+
+
 def join_segments(parts: list[Any]) -> str:
     out = []
     for p in parts:
-        body = json.dumps(p, ensure_ascii=False, separators=(",", ":"))
+        body = scrub_tokens(json.dumps(p, ensure_ascii=False, separators=(",", ":")))
         out.append(f"{len(body)};{body}")
     return "".join(out)
 
