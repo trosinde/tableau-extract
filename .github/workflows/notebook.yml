@@ -1,0 +1,30 @@
+name: notebook
+
+on:
+  push:
+    paths: ["src/**", "notebooks/**", "scripts/run_notebook.py", "pyproject.toml", ".github/workflows/notebook.yml"]
+  pull_request:
+    paths: ["src/**", "notebooks/**", "scripts/run_notebook.py", "pyproject.toml", ".github/workflows/notebook.yml"]
+  workflow_dispatch:
+
+jobs:
+  schnellstart:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Wheel bauen
+        run: uv build --wheel -o dist
+      - name: Frische Umgebung mit dem Wheel
+        run: |
+          uv venv /tmp/nbenv -p 3.12
+          uv pip install -p /tmp/nbenv/bin/python dist/*.whl nbclient nbformat ipykernel
+      - name: Notebook ausführen (Offline-Wiederholung, Installationszelle übersprungen)
+        env:
+          TABLEAU_EXTRACT_REPLAY: ${{ github.workspace }}/notebooks/beispiel_raw
+        run: /tmp/nbenv/bin/python scripts/run_notebook.py notebooks/schnellstart.ipynb /tmp/nbwork /tmp/schnellstart-ausgefuehrt.ipynb
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: schnellstart-ausgefuehrt
+          path: /tmp/schnellstart-ausgefuehrt.ipynb

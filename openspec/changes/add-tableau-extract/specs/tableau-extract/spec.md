@@ -179,15 +179,7 @@ Je erfolgreichem Lauf mit geänderten Daten SHALL das System den Ordner `out/<sl
 - **THEN** erhält es in `kreise.csv` einen eindeutigen snake_case-Namen, und `meta.json` ordnet ihm den Originalnamen zu
 
 ### Requirement: Nachvollziehbarkeit
-Das System SHALL je Lauf in `meta.json` festhalten:
-- die Eingabe-URL und die normalisierte URL
-- den verwendeten Weg und das Blatt
-- den Filterzustand sowie alle Filter mit ihren Werten
-- Feldliste mit Original- und Spaltennamen, Datentyp und Werttyp
-- Abrufzeit (UTC) und Gebietsschema
-- die SHA-256-Prüfsummen jeder Rohantwort und den Daten-Fingerabdruck
-- die Fehlversuche mit Weg, HTTP-Status und Meldung
-- die Ergebnisse der Prüfungen
+Das System SHALL je Lauf in `meta.json` festhalten: Eingabe- und normalisierte URL, Weg, Blatt, Filterzustand und alle Filter mit Werten, Feldliste (Original- und Spaltenname, Datentyp, Werttyp), Abrufzeit (UTC), Gebietsschema, Veröffentlichungsstand (sofern verfügbar), SHA-256 je Rohantwort, Daten-Fingerabdruck, Fehlversuche (Weg, HTTP-Status, Meldung) und Prüfergebnisse.
 
 #### Scenario: Metadaten eines Laufs
 - **WHEN** ein Lauf über Weg B Daten liefert
@@ -208,6 +200,36 @@ Das System SHALL nach jedem Abruf einen Daten-Fingerabdruck (SHA-256) aus dem In
 - **WHEN** sich mindestens ein Wert eines Kreises gegenüber dem Lauf hinter `latest` geändert hat
 - **THEN** wird ein neuer Ordner geschrieben, und `latest` zeigt darauf
 
+### Requirement: Vorabprüfung des Veröffentlichungsstands
+Vor dem vollständigen Abruf SHALL das System mit einer kleinen Anfrage den Veröffentlichungsstand der Arbeitsmappe lesen (Zeitpunkt der letzten Veröffentlichung und Inhaltsversion). Ist er gleich dem gespeicherten Stand und liegt die letzte Vollprüfung weniger als `--full-check-days` Tage (Standard 30) zurück, SHALL das System die Daten nicht laden und nichts schreiben.
+
+#### Scenario: Unveränderter Veröffentlichungsstand
+- **WHEN** der Veröffentlichungsstand gleich dem gespeicherten ist und die letzte Vollprüfung 3 Tage zurückliegt
+- **THEN** lädt das System die Daten nicht, meldet „unverändert (Veröffentlichungsstand)“ mit Exit-Code 0, und `latest` bleibt unverändert
+
+#### Scenario: Neue Veröffentlichung
+- **WHEN** sich der Zeitpunkt der letzten Veröffentlichung oder die Inhaltsversion geändert hat
+- **THEN** lädt das System die Daten vollständig und entscheidet über den Daten-Fingerabdruck, ob ein neuer Ordner entsteht
+
+#### Scenario: Sicherheitsnetz nach Ablauf der Frist
+- **WHEN** der Veröffentlichungsstand gleich ist, die letzte Vollprüfung aber 31 Tage zurückliegt
+- **THEN** lädt das System die Daten vollständig, vergleicht den Fingerabdruck und vermerkt die neue Vollprüfung
+
+#### Scenario: Vollabruf erzwungen
+- **WHEN** `--force` angegeben ist
+- **THEN** lädt das System die Daten vollständig, unabhängig vom Veröffentlichungsstand
+
+#### Scenario: Stand nicht verfügbar
+- **WHEN** die Antwort keinen Veröffentlichungsstand enthält oder der Weg ihn nicht liefern kann
+- **THEN** lädt das System die Daten vollständig
+
+### Requirement: Zustand der Änderungserkennung
+Das System SHALL je Ansicht `out/<slug>/state.json` mit Veröffentlichungsstand, Zeitpunkt der letzten Vollprüfung und Daten-Fingerabdruck führen. Eine Aktualisierung dieser Datei SHALL NOT einen neuen Lauf-Ordner anlegen oder `latest` verändern.
+
+#### Scenario: Vollprüfung ohne Datenänderung
+- **WHEN** eine Vollprüfung denselben Fingerabdruck wie `latest` ergibt
+- **THEN** wird nur der Zeitpunkt der letzten Vollprüfung in `state.json` aktualisiert, ohne neuen Ordner
+
 ### Requirement: Gesperrte Quelle
 WHEN kein Weg Daten liefert, SHALL das System mit Exit-Code 2 enden, einen Bericht der Fehlversuche (Weg, HTTP-Status, Meldung) ausgeben und SHALL NOT eine Datentabelle, Teil- oder Schätzdaten schreiben.
 
@@ -223,11 +245,41 @@ Mit `--check-sum <wert>` SHALL das System die Summe eines Messfeldes über alle 
 - **THEN** meldet das System eine Abweichung von −1,1 % und vermerkt Soll, Ist und Abweichung in `meta.json`
 
 ### Requirement: Python-API
-Das System SHALL eine Funktion `extract(url, **optionen)` bereitstellen, die dieselben Optionen wie die CLI akzeptiert. Sie SHALL ein Ergebnis mit der normalisierten Tabelle als DataFrame, den Metadaten, den geschriebenen Pfaden und dem Status `neu` bzw. `unverändert` liefern.
+Das System SHALL `extract(url, **optionen)` und `list_view(url)` als öffentliche API bereitstellen; sie akzeptieren dieselben Optionen wie die CLI. `extract` SHALL ein `ExtractResult` liefern mit Status `neu` bzw. `unverändert`, normalisierter Tabelle als DataFrame, Metadaten und Ausgabepfad. Fehler SHALL als Ausnahmen mit dem Exit-Code der CLI gemeldet werden.
 
 #### Scenario: Aufruf aus Python
 - **WHEN** `extract(url, out="out/")` erfolgreich ausgeführt wird
 - **THEN** enthält das Ergebnis den DataFrame mit denselben Daten wie `kreise.csv`, die Metadaten aus `meta.json` und den Ausgabepfad
+
+#### Scenario: Ansicht auflisten aus Python
+- **WHEN** `list_view(url)` aufgerufen wird
+- **THEN** liefert das System Blätter, Felder mit Rollen sowie Filter, ohne Dateien zu schreiben
+
+#### Scenario: Gesperrte Quelle aus Python
+- **WHEN** `extract(url)` aufgerufen wird und kein Weg Daten liefert
+- **THEN** wird eine Ausnahme mit `exit_code = 2` und dem Versuchsprotokoll ausgelöst
+
+### Requirement: Herkunft der Referenzliste
+Das System SHALL die Kreis-Referenzliste in dieser Reihenfolge suchen: explizit angegebener Pfad (`--referenz`), `./config/kreise_<JJJJ>.csv` im Arbeitsverzeichnis, mitgelieferte Fassung im Paket. Die verwendete Herkunft (`pfad`, `projekt` oder `paket`) SHALL in `meta.json` stehen.
+
+#### Scenario: Ohne Projektdatei
+- **WHEN** das Paket installiert ist und im Arbeitsverzeichnis kein `config/` existiert
+- **THEN** verwendet das System die mitgelieferte Liste und vermerkt `referenz = paket`
+
+#### Scenario: Projektdatei hat Vorrang
+- **WHEN** `./config/kreise_2023.csv` existiert
+- **THEN** verwendet das System diese Datei und vermerkt `referenz = projekt`
+
+### Requirement: Offline-Wiederholung aus Rohdaten
+Mit `--replay <ordner>` oder der Umgebungsvariable `TABLEAU_EXTRACT_REPLAY` SHALL das System statt eines Abrufs die dort gespeicherten Rohantworten eines früheren Laufs (Inhalt von `raw/`) verarbeiten. Es SHALL dabei keine Netzwerkanfrage stellen und in `meta.json` `method = replay` samt Quellordner vermerken.
+
+#### Scenario: Früheren Lauf neu auswerten
+- **WHEN** `tableau-extract "<url>" --replay out/<slug>/latest/raw` aufgerufen wird
+- **THEN** entsteht dieselbe Tabelle wie im ursprünglichen Lauf, ohne Netzwerkzugriff, und `meta.json` nennt `method = replay`
+
+#### Scenario: Replay-Ordner ohne verwertbare Antwort
+- **WHEN** der Replay-Ordner keine `bootstrapSession`- oder CSV-Antwort enthält
+- **THEN** endet das System mit Exit-Code 1 und einer Meldung, welche Dateien erwartet werden
 
 ### Requirement: Konfiguration ohne Zugangsdaten
 Das System SHALL ausschließlich über CLI-Argumente und Umgebungsvariablen konfigurierbar sein und SHALL NOT Zugangsdaten im Code oder in Ausgabedateien enthalten.

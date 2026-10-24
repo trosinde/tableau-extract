@@ -3,8 +3,7 @@
   "input_url": "https://tableau.bbsr.bund.de/t/bbr/views/Wohnungsneubaubedarfe_insgesamt_2023_bis_2030pa_krs_FINAL/DWohnungsneubaubedare_insgesamt?%3Aembed=y&%3AisGuestRedirectFromVizportal=y",
   "view_url": "https://tableau.bbsr.bund.de/t/bbr/views/Wohnungsneubaubedarfe_insgesamt_2023_bis_2030pa_krs_FINAL/DWohnungsneubaubedare_insgesamt",
   "timestamp_utc": "2026-10-24T12:41:35+00:00",
-  "host": "entfernt",
-  "public_ip": "entfernt",
+  "netz": "Rechenzentrum (GitHub Actions)",
   "python": "3.12.3",
   "results": [
     {

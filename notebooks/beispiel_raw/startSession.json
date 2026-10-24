@@ -1,0 +1,22 @@
+{
+ "vizql_root": "/vizql/t/bbr/w/Wohnungsneubaubedarfe_insgesamt_2023_bis_2030pa_krs_FINAL/v/DWohnungsneubaubedare_insgesamt",
+ "site_root": "/t/bbr",
+ "sessionid": "TESTSESSION-1:1",
+ "sheetId": "D%3A%20Wohnungsneubaubedare_insgesamt",
+ "locale": "en_US",
+ "language": "en",
+ "workbookName": "Wohnungsneubaubedarfe_insgesamt_2023_bis_2030pa_krs_FINAL",
+ "repositoryUrl": "Wohnungsneubaubedarfe_insgesamt_2023_bis_2030pa_krs_FINAL/DWohnungsneubaubedare_insgesamt",
+ "current_view_luid": "2df355e6-93da-4e8e-958c-d10b82a500fb",
+ "current_workbook_luid": "8fb35616-28fb-425e-a898-4e1fa20f529d",
+ "workbookLastPublishedAt": "2025-03-05T15:16:42.359Z",
+ "workbookContentVersion": 1,
+ "allow_export_data": false,
+ "allow_export_image": true,
+ "allow_view_underlying": false,
+ "allow_summary": false,
+ "visible_sheets": [
+  "D: Wohnungsneubaubedare_insgesamt"
+ ],
+ "current_sheet_type": "dashboard"
+}

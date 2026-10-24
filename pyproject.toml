@@ -1,13 +1,24 @@
 [project]
 name = "tableau-extract"
-version = "0.0.0"
+version = "0.1.0"
 description = "Extrahiert die Daten einer Tableau-Kartenansicht je Landkreis exakt als Tabelle."
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
+authors = [{ name = "Thorsten Rosin" }]
 dependencies = [
     "requests>=2.32",
+    "pandas>=2.2",
+    "pyarrow>=17",
 ]
+
+[project.optional-dependencies]
+browser = [
+    "playwright>=1.48",
+]
+
+[project.scripts]
+tableau-extract = "tableau_extract.cli:main"
 
 [dependency-groups]
 probe = [
@@ -15,8 +26,14 @@ probe = [
 ]
 dev = [
     "pytest>=8",
+    "responses>=0.25",
     "ruff>=0.6",
     "mypy>=1.11",
+    "pandas-stubs>=2.2",
+    "types-requests>=2.32",
+    "nbclient>=0.10",
+    "nbformat>=5.10",
+    "ipykernel>=6.29",
 ]
 
 [build-system]
@@ -29,3 +46,28 @@ packages = ["src/tableau_extract"]
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+extend-exclude = ["probe"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "RUF"]
+ignore = ["RUF001", "RUF002", "RUF003"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["src"]
+
+[[tool.mypy.overrides]]
+module = ["playwright.*", "pyarrow.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["live: greift auf die echte Tableau-Quelle zu (nur lokal, standardmäßig aus)"]
+addopts = "-m 'not live'"
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/make_notebook.py" = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["tableau_extract"]

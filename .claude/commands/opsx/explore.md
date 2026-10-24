@@ -4,6 +4,8 @@ description: "Enter explore mode - think through ideas, investigate problems, cl
 allowed-tools: Bash(openspec:*)
 category: "Workflow"
 tags: ["workflow", "explore", "experimental", "thinking"]
+model: opus
+effort: medium
 ---
 
 Enter explore mode. Think deeply. Visualize freely. Follow the conversation wherever it goes.
