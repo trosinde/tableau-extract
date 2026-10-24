@@ -62,8 +62,8 @@
 - [x] 10.1 README an das tatsächliche Verhalten anpassen (Status-Hinweis „in Planung“ und `[geplant]`-Marken entfernen, Beispielausgaben durch echte ersetzen, Diagramme aktuell halten), `LICENSE` (MIT), `CHANGELOG.md` anlegen; prüfen, dass die README-Befehle so laufen und die Mermaid-Diagramme fehlerfrei rendern
 - [x] 10.2 Live-Test `tests/test_live.py` (`@pytest.mark.live`): BBSR-URL → 400 Zeilen, gültige `ags5`, Summe innerhalb ±5 % von 320 000, zweiter Lauf „unverändert“, Beispiel-Notebook live ohne Replay; lokal ausführen mit `uv run pytest -m live`
 - [x] 10.3 Integrationsprüfung: `uv run ruff check && uv run ruff format --check && uv run mypy src && uv run pytest`, `openspec validate add-tableau-extract --strict` grün, CI und Notebook-Workflow grün
-- [ ] 10.4 Akzeptanz: echter Lauf `tableau-extract "<BBSR-URL>"` lokal, 5 Kreise mit den Tooltip-Werten der Karte abgleichen (z. B. Berlin, Bonn, Rhein-Sieg-Kreis, Ahrweiler, Erzgebirgskreis) und als Tabelle in die PR-Beschreibung; zweiter Lauf meldet „unverändert“
-- [ ] 10.5 Release 0.1.0: Version in `pyproject.toml`/`__init__`, CHANGELOG-Eintrag, nach dem Merge Tag `v0.1.0` auf `main`; prüfen mit `%pip install "git+https://github.com/trosinde/tableau-extract.git@v0.1.0"` in einem frischen Kernel und Ausführen des Beispiel-Notebooks
+- [x] 10.4 Akzeptanz: echter Lauf `tableau-extract "<BBSR-URL>"` lokal, 5 Kreise mit den Tooltip-Werten der Karte abgleichen (z. B. Berlin, Bonn, Rhein-Sieg-Kreis, Ahrweiler, Erzgebirgskreis) und als Tabelle in die PR-Beschreibung; zweiter Lauf meldet „unverändert“
+- [x] 10.5 Release 0.1.0: Version in `pyproject.toml`/`__init__`, CHANGELOG-Eintrag, nach dem Merge Tag `v0.1.0` auf `main`; prüfen mit `%pip install "git+https://github.com/trosinde/tableau-extract.git@v0.1.0"` in einem frischen Kernel und Ausführen des Beispiel-Notebooks
 
 ## Workflow follow-up
 
