@@ -1,0 +1,25 @@
+name: access-probe
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: Tableau-View-URL
+        required: true
+        default: "https://tableau.bbsr.bund.de/t/bbr/views/Wohnungsneubaubedarfe_insgesamt_2023_bis_2030pa_krs_FINAL/DWohnungsneubaubedare_insgesamt?%3Aembed=y&%3AisGuestRedirectFromVizportal=y"
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --group probe
+      - run: uv run playwright install --with-deps chromium
+      - run: uv run python probe/access_probe.py "${{ inputs.url }}" --env cloud
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: probe-cloud
+          path: probe/results/cloud/

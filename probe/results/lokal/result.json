@@ -1,0 +1,199 @@
+{
+  "env": "lokal",
+  "input_url": "https://tableau.bbsr.bund.de/t/bbr/views/Wohnungsneubaubedarfe_insgesamt_2023_bis_2030pa_krs_FINAL/DWohnungsneubaubedare_insgesamt?%3Aembed=y&%3AisGuestRedirectFromVizportal=y",
+  "view_url": "https://tableau.bbsr.bund.de/t/bbr/views/Wohnungsneubaubedarfe_insgesamt_2023_bis_2030pa_krs_FINAL/DWohnungsneubaubedare_insgesamt",
+  "timestamp_utc": "2026-10-24T12:39:08+00:00",
+  "host": "entfernt",
+  "public_ip": "entfernt",
+  "python": "3.12.13",
+  "results": [
+    {
+      "test": "T1",
+      "url": "https://tableau.bbsr.bund.de/robots.txt",
+      "ok": false,
+      "status": 404,
+      "reason": "Not Found",
+      "location": null,
+      "content_type": "text/html; charset=utf-8",
+      "server": "Tableau",
+      "bytes": 787,
+      "login_redirect": false,
+      "body_snippet": "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><title>Page Not Found</title><style>html {\n  height: 100%;\n  width: 100%;\n}\nbody {\n  position: absolute;\n  width: 100%;\n  margin: 0;\n  top: 20%;\n  font-family: Verdana, Geneva, sans-serif;\n  text-al",
+      "seconds": 0.15
+    },
+    {
+      "test": "T2",
+      "url": "https://tableau.bbsr.bund.de/t/bbr/views/Wohnungsneubaubedarfe_insgesamt_2023_bis_2030pa_krs_FINAL/DWohnungsneubaubedare_insgesamt?%3Aembed=y&%3AisGuestRedirectFromVizportal=y",
+      "ok": true,
+      "status": 200,
+      "reason": "",
+      "location": null,
+      "content_type": "text/html;charset=utf-8",
+      "server": "Tableau",
+      "bytes": 5238,
+      "login_redirect": false,
+      "body_snippet": "<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"UTF-8\" />\n    <meta http-equiv=\"Expires\" content=\"Thu, 01 Jan 1970 00:00:00 GMT\" />\n    <meta http-equiv=\"Pragma\" content=\"no-cache\" />\n    <meta name=\"format-detection\" content=\"telephone=no\" />\n    <meta name=\"viewport\" content=\"width=device-width, ",
+      "seconds": 0.14
+    },
+    {
+      "test": "T3",
+      "url": "https://tableau.bbsr.bund.de/t/bbr/views/Wohnungsneubaubedarfe_insgesamt_2023_bis_2030pa_krs_FINAL/DWohnungsneubaubedare_insgesamt?%3Aembed=y&%3AisGuestRedirectFromVizportal=y",
+      "ok": true,
+      "status": 200,
+      "reason": "",
+      "location": null,
+      "content_type": "text/html;charset=utf-8",
+      "server": "Tableau",
+      "bytes": 5238,
+      "login_redirect": false,
+      "body_snippet": "<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"UTF-8\" />\n    <meta http-equiv=\"Expires\" content=\"Thu, 01 Jan 1970 00:00:00 GMT\" />\n    <meta http-equiv=\"Pragma\" content=\"no-cache\" />\n    <meta name=\"format-detection\" content=\"telephone=no\" />\n    <meta name=\"viewport\" content=\"width=device-width, ",
+      "seconds": 0.13
+    },
+    {
+      "test": "T4",
+      "url": "https://tableau.bbsr.bund.de/t/bbr/views/Wohnungsneubaubedarfe_insgesamt_2023_bis_2030pa_krs_FINAL/DWohnungsneubaubedare_insgesamt.csv",
+      "ok": false,
+      "status": 404,
+      "reason": "",
+      "location": null,
+      "content_type": "application/json;charset=UTF-8",
+      "server": "Tableau",
+      "bytes": 306,
+      "login_redirect": false,
+      "body_snippet": "\r\n{\"timeStamp\":\"2026-10-24 12:39:01.002\",\"errorResponseType\":\"Generic\",\"requestString\":\"<p class=\\\"Textinsidetable\\\">&nbsp;&nbsp;Request ID: atym5Fp6Lcma5-ajz2XFIwAAAQU.<\\/p>\",\"errorExtras\":\"(atym5Fp6Lcma5-ajz2XFIwAAAQU,1:1)\",\"type\":\"missing-view\",\"linksGallery\":\"https:\\/\\/public.tableau.com\\/s\\/gal",
+      "seconds": 0.16
+    },
+    {
+      "test": "T5",
+      "url": "https://tableau.bbsr.bund.de/t/bbr/views/Wohnungsneubaubedarfe_insgesamt_2023_bis_2030pa_krs_FINAL/DWohnungsneubaubedare_insgesamt",
+      "ok": true,
+      "page_status": 200,
+      "final_url": "https://tableau.bbsr.bund.de/t/bbr/views/Wohnungsneubaubedarfe_insgesamt_2023_bis_2030pa_krs_FINAL/DWohnungsneubaubedare_insgesamt?:embed=y",
+      "seconds": 3.73,
+      "title": "Workbook: Wohnungsneubaubedarfe_insgesamt_2023_bis_2030pa_krs_FINAL",
+      "login_page": false,
+      "download_menu": {
+        "button_found": true,
+        "options": {
+          "Bild": "aktiv",
+          "Daten": "nicht angeboten",
+          "Kreuztabelle": "nicht angeboten",
+          "PDF": "aktiv",
+          "PowerPoint": "aktiv",
+          "Arbeitsmappe": "nicht angeboten"
+        }
+      },
+      "vizql_calls": [
+        {
+          "url": "https://tableau.bbsr.bund.de/vizql/v_202512510031138/css/vqlweb.css",
+          "status": 200
+        },
+        {
+          "url": "https://tableau.bbsr.bund.de/vizql/v_202512510031138/javascripts/built-dojo/tableau/web/css/tableau.css",
+          "status": 200
+        },
+        {
+          "url": "https://tableau.bbsr.bund.de/vizql/v_202512510031138/javascripts/PreBootstrap.min.js",
+          "status": 200
+        },
+        {
+          "url": "https://tableau.bbsr.bund.de/vizql/v_202512510031138/javascripts/formatters-and-parsers.en_US.js",
+          "status": 200
+        },
+        {
+          "url": "https://tableau.bbsr.bund.de/vizql/v_202512510031138/javascripts/messages.en_US.js",
+          "status": 200
+        },
+        {
+          "url": "https://tableau.bbsr.bund.de/vizql/v_202512510031138/javascripts/mscorlib.min.js",
+          "status": 200
+        },
+        {
+          "url": "https://tableau.bbsr.bund.de/vizql/v_202512510031138/javascripts/jsstrings_en.js",
+          "status": 200
+        },
+        {
+          "url": "https://tableau.bbsr.bund.de/vizql/v_202512510031138/javascripts/jquery.min.js",
+          "status": 200
+        },
+        {
+          "url": "https://tableau.bbsr.bund.de/vizql/v_202512510031138/javascripts/ViewerBootstrap.js",
+          "status": 200
+        },
+        {
+          "url": "https://tableau.bbsr.bund.de/vizql/t/bbr/w/Wohnungsneubaubedarfe_insgesamt_2023_bis_2030pa_krs_FINAL/v/DWohnungsneubaubedare_insgesamt/startSession/viewing?%3Aembed=y&%3Aredirect=auth",
+          "status": 200
+        },
+        {
+          "url": "https://tableau.bbsr.bund.de/vizql/v_202512510031138/javascripts/vqlweb.js",
+          "status": 200
+        },
+        {
+          "url": "https://tableau.bbsr.bund.de/vizql/t/bbr/w/Wohnungsneubaubedarfe_insgesamt_2023_bis_2030pa_krs_FINAL/v/DWohnungsneubaubedare_insgesamt/bootstrapSession/sessions/546B345BF08C46F8BF92DD119ADD3C27-1:1",
+          "status": 200
+        },
+        {
+          "url": "https://tableau.bbsr.bund.de/vizql/v_202512510031138/javascripts/viz-viewer-toolbar.min.js",
+          "status": 200
+        },
+        {
+          "url": "https://tableau.bbsr.bund.de/vizql/v_202512510031138/fonts/Tableau-Semibold.woff2",
+          "status": 200
+        },
+        {
+          "url": "https://tableau.bbsr.bund.de/vizql/v_202512510031138/fonts/Tableau-Book.woff2",
+          "status": 200
+        },
+        {
+          "url": "https://tableau.bbsr.bund.de/vizql/v_202512510031138/fonts/BentonSans-Medium.woff2",
+          "status": 200
+        },
+        {
+          "url": "https://tableau.bbsr.bund.de/vizql/v_202512510031138/fonts/BentonSans-SemiDemi.woff2",
+          "status": 200
+        },
+        {
+          "url": "https://tableau.bbsr.bund.de/vizql/v_202512510031138/css/mapbox-gl.css",
+          "status": 200
+        },
+        {
+          "url": "https://tableau.bbsr.bund.de/vizql/t/bbr/w/Wohnungsneubaubedarfe_insgesamt_2023_bis_2030pa_krs_FINAL/v/DWohnungsneubaubedare_insgesamt/sessions/546B345BF08C46F8BF92DD119ADD3C27-1:1/commands/tabdoc/notify-first-client-render-occurred",
+          "status": 200
+        },
+        {
+          "url": "https://tableau.bbsr.bund.de/vizql/v_202512510031138/images/vqlweb.svg?mdj9aieu",
+          "status": 200
+        }
+      ],
+      "bootstrap_status": 200,
+      "bootstrap_bytes": 4604133,
+      "bootstrap_has_dataDictionary": true,
+      "bootstrap_has_presModel": true,
+      "bootstrap_summary": {
+        "value_counts_by_type": {
+          "integer": 401,
+          "real": 1085,
+          "cstring": 1301,
+          "spatial": 400
+        },
+        "sheets": {
+          "Impressum": [
+            "SUM(Krs2022)"
+          ],
+          "Karte": [
+            "COLLECT(Geometrie)",
+            "P Wohnungsneubaubedarf 2330 We Pa Je 10000Ew (Round) (Klassen)",
+            "krs23",
+            "krsname23",
+            "slk2023",
+            "SUM(P Wohnungsneubaubedarf 2330 We Pa Je 10000Ew (Round))",
+            "SUM(P Wohnungsneubaubedarf 2330 We Pa (Round))",
+            "Latitude (generated)",
+            "Longitude (generated)"
+          ]
+        }
+      },
+      "bootstrap_flags": []
+    }
+  ]
+}
