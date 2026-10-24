@@ -186,7 +186,7 @@ stages:
 ```
 src/tableau_extract/   Paket (CLI, API, Wege, Parser, Normalisierung)   [geplant]
 tests/                 Tests ohne Netzwerk + Fixtures; Live-Test mit -m live   [geplant]
-data/                  Kreis-Referenzlisten (Destatis)   [geplant]
+src/tableau_extract/data/  Kreis-Referenzlisten (Destatis)   [geplant]
 probe/                 Zugangsprüfung (Schritt 0)   [vorhanden]
 docs/zugangsbericht.md Ergebnis der Zugangsprüfung   [vorhanden]
 openspec/              Spezifikation (OpenSpec)   [vorhanden]

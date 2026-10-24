@@ -64,7 +64,7 @@ Die Zugangsprüfung (`docs/zugangsbericht.md`, Einstufung **A-lokal**) zeigt den
 
 ## Impact
 
-- **Neuer Code:** `src/tableau_extract/` mit CLI und API, `tests/` mit Fixtures, `data/` mit der Kreis-Referenzliste.
+- **Neuer Code:** `src/tableau_extract/` mit CLI und API, `tests/` mit Fixtures, `src/tableau_extract/data/` mit der Kreis-Referenzliste.
 - **Abhängigkeiten:** `requests`, `pandas`, `pyarrow`; `playwright` als optionales Extra `browser` für Weg D.
 - **Betrieb:** nur von Nicht-Rechenzentrums-IPs (lokal, Homelab). GitHub Actions fährt nur Lint und Offline-Tests.
 - `probe/` bleibt als Werkzeug der Zugangsprüfung bestehen.

@@ -211,7 +211,7 @@ Playwright ist das optionale Extra `tableau-extract[browser]`. Fehlt es, wird We
 
 ### D6 Kreiszuordnung und Referenzliste
 
-- **Referenz:** Destatis GV-ISys, Kreise nach Gebietsstand, eingecheckt als `data/kreise_<JJJJ>.csv` (`ags5;name;typ`). Zunächst für 31.12.2023, weil `krs23` und `krsname23` auf den Gebietsstand 2023 deuten. Die Herkunft und die Prüfsumme der Quelldatei stehen in `data/README.md`.
+- **Referenz:** Destatis GV-ISys, Kreise nach Gebietsstand, eingecheckt als `src/tableau_extract/data/kreise_<JJJJ>.csv` (Paketdaten, damit sie mit installiert werden) (`ags5;name;typ`). Zunächst für 31.12.2023, weil `krs23` und `krsname23` auf den Gebietsstand 2023 deuten. Die Herkunft und die Prüfsumme der Quelldatei stehen in `src/tableau_extract/data/README.md`.
 - **Gebietsstand:** aus einer Jahreszahl im Schlüssel- oder Namensfeld (`krs23` → 2023). Sonst die neueste Liste. Mit `--gebietsstand JJJJ` lässt er sich erzwingen.
 - **Schlüssel:** Ganzzahl bzw. Text → Ziffern; 7–8 Stellen → auf 8 auffüllen, erste 5; 4–5 Stellen → auf 5 auffüllen. Sonst ungültig.
 - **Namen**, nur wenn kein Schlüssel vorhanden ist:

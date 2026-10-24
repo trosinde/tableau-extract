@@ -2,7 +2,7 @@
 
 ## 1. Projektgerüst
 
-- [ ] 1.1 Branch `feat/tableau-extract` anlegen; `pyproject.toml` um `pandas`, `pyarrow`, das Extra `browser` (playwright), die Dev-Gruppe (`pytest`, `responses`, `ruff`, `mypy`, `pandas-stubs`), den Entry-Point `tableau-extract` und pytest-Marker `live` (standardmäßig abgewählt) ergänzen; prüfen mit `uv sync --all-groups && uv run tableau-extract --help`
+- [x] 1.1 Branch `feat/tableau-extract` anlegen; `pyproject.toml` um `pandas`, `pyarrow`, das Extra `browser` (playwright), die Dev-Gruppe (`pytest`, `responses`, `ruff`, `mypy`, `pandas-stubs`), den Entry-Point `tableau-extract` und pytest-Marker `live` (standardmäßig abgewählt) ergänzen; prüfen mit `uv sync --all-groups && uv run tableau-extract --help`
 - [ ] 1.2 Modulstruktur nach design.md D1 anlegen (leere Module mit Docstrings, `py.typed`); prüfen mit `uv run ruff check && uv run mypy src`
 - [ ] 1.3 CI-Workflow `.github/workflows/ci.yml` (Push und PR: `ruff check`, `ruff format --check`, `mypy`, `pytest -m "not live"`) anlegen; prüfen mit grünem Lauf auf GitHub
 
@@ -20,7 +20,7 @@
 ## 4. Normalisierung und Kreiszuordnung
 
 - [ ] 4.1 `normalize.py`: Zahlen nach Locale mit `Decimal` (en/de, nicht eindeutig → Fehler), Sonderwerte leer, Klassenfelder mit `<feld>_typ`; prüfen mit `tests/test_numbers.py` (`1.234,5`→1234.5 de, `1,600`→1600 en, `75.4` exakt, `*`/`null`/leer → leer, Klasse → `klasse`)
-- [ ] 4.2 Destatis-Kreisliste Gebietsstand 31.12.2023 beschaffen, als `data/kreise_2023.csv` (`ags5;name;typ`, 400 Zeilen) einchecken, Herkunft/URL/SHA-256 in `data/README.md`; prüfen mit Test „400 eindeutige ags5“
+- [ ] 4.2 Destatis-Kreisliste Gebietsstand 31.12.2023 beschaffen, als `src/tableau_extract/data/kreise_2023.csv` (`ags5;name;typ`, 400 Zeilen) einchecken, Herkunft/URL/SHA-256 in `src/tableau_extract/data/README.md`; prüfen mit Test „400 eindeutige ags5“
 - [ ] 4.3 `regions.py`: Schlüssel normalisieren (D6), Gebietsstand ableiten, Namensabgleich (Umlaute, Zusätze), Mehrdeutigkeit → Fehler mit Kandidaten, Vollständigkeit (fehlend/überzählig/doppelt); prüfen mit `tests/test_regions.py` (`8111`→`08111`, `9764000`→`09764`, „Ahrweiler, Landkreis“, „Muenchen, Landkreis“, mehrdeutiger Name → Exit-3-Fehler, 398 Kreise → Warnung mit Liste)
 
 ## 5. Extraktionswege
