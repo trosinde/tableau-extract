@@ -25,6 +25,7 @@ Die Werte stammen exakt aus dem Tableau-Datenmodell, nicht aus Farben oder Toolt
         metadata={"tags": ["skip-ci"]},
     ),
     code("""import pandas as pd
+
 from tableau_extract import extract, list_view
 
 URL = (
