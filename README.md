@@ -232,7 +232,7 @@ sequenceDiagram
     end
 ```
 
-Details und weitere Diagramme: [design.md](openspec/changes/add-tableau-extract/design.md).
+Details und weitere Diagramme: [design.md](openspec/changes/archive/2026-10-24-add-tableau-extract/design.md).
 
 ## In einer DVC-Pipeline
 
@@ -266,7 +266,7 @@ openspec/                   Spezifikation (OpenSpec)
 
 ## Entwicklung
 
-Die Anforderungen stehen in OpenSpec: [proposal](openspec/changes/add-tableau-extract/proposal.md) · [spec](openspec/changes/add-tableau-extract/specs/tableau-extract/spec.md) · [notebook-spec](openspec/changes/add-tableau-extract/specs/notebook-usage/spec.md) · [design](openspec/changes/add-tableau-extract/design.md) · [tasks](openspec/changes/add-tableau-extract/tasks.md)
+Die geltenden Anforderungen stehen in OpenSpec unter `openspec/specs/`; der umgesetzte Change ist archiviert: [proposal](openspec/changes/archive/2026-10-24-add-tableau-extract/proposal.md) · [spec](openspec/specs/tableau-extract/spec.md) · [notebook-spec](openspec/specs/notebook-usage/spec.md) · [design](openspec/changes/archive/2026-10-24-add-tableau-extract/design.md) · [tasks](openspec/changes/archive/2026-10-24-add-tableau-extract/tasks.md)
 
 ```bash
 uv run pytest                     # Tests ohne Netzwerk
