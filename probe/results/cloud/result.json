@@ -1,0 +1,90 @@
+{
+  "env": "cloud",
+  "input_url": "https://tableau.bbsr.bund.de/t/bbr/views/Wohnungsneubaubedarfe_insgesamt_2023_bis_2030pa_krs_FINAL/DWohnungsneubaubedare_insgesamt?%3Aembed=y&%3AisGuestRedirectFromVizportal=y",
+  "view_url": "https://tableau.bbsr.bund.de/t/bbr/views/Wohnungsneubaubedarfe_insgesamt_2023_bis_2030pa_krs_FINAL/DWohnungsneubaubedare_insgesamt",
+  "timestamp_utc": "2026-10-24T12:41:35+00:00",
+  "host": "entfernt",
+  "public_ip": "entfernt",
+  "python": "3.12.3",
+  "results": [
+    {
+      "test": "T1",
+      "url": "https://tableau.bbsr.bund.de/robots.txt",
+      "ok": false,
+      "status": 403,
+      "reason": "Forbidden",
+      "location": null,
+      "content_type": "text/html",
+      "server": "CloudFront",
+      "bytes": 919,
+      "login_redirect": false,
+      "body_snippet": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n<HTML><HEAD><META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=iso-8859-1\">\n<TITLE>ERROR: The request could not be satisfied</TITLE>\n</HEAD><BODY>\n<H1>403 ERROR</H1>\n<H2>The request could ",
+      "seconds": 0.69
+    },
+    {
+      "test": "T2",
+      "url": "https://tableau.bbsr.bund.de/t/bbr/views/Wohnungsneubaubedarfe_insgesamt_2023_bis_2030pa_krs_FINAL/DWohnungsneubaubedare_insgesamt?%3Aembed=y&%3AisGuestRedirectFromVizportal=y",
+      "ok": false,
+      "status": 403,
+      "reason": "Forbidden",
+      "location": null,
+      "content_type": "text/html",
+      "server": "CloudFront",
+      "bytes": 919,
+      "login_redirect": false,
+      "body_snippet": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n<HTML><HEAD><META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=iso-8859-1\">\n<TITLE>ERROR: The request could not be satisfied</TITLE>\n</HEAD><BODY>\n<H1>403 ERROR</H1>\n<H2>The request could ",
+      "seconds": 0.83
+    },
+    {
+      "test": "T3",
+      "url": "https://tableau.bbsr.bund.de/t/bbr/views/Wohnungsneubaubedarfe_insgesamt_2023_bis_2030pa_krs_FINAL/DWohnungsneubaubedare_insgesamt?%3Aembed=y&%3AisGuestRedirectFromVizportal=y",
+      "ok": false,
+      "status": 403,
+      "reason": "Forbidden",
+      "location": null,
+      "content_type": "text/html",
+      "server": "CloudFront",
+      "bytes": 919,
+      "login_redirect": false,
+      "body_snippet": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n<HTML><HEAD><META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=iso-8859-1\">\n<TITLE>ERROR: The request could not be satisfied</TITLE>\n</HEAD><BODY>\n<H1>403 ERROR</H1>\n<H2>The request could ",
+      "seconds": 0.52
+    },
+    {
+      "test": "T4",
+      "url": "https://tableau.bbsr.bund.de/t/bbr/views/Wohnungsneubaubedarfe_insgesamt_2023_bis_2030pa_krs_FINAL/DWohnungsneubaubedare_insgesamt.csv",
+      "ok": false,
+      "status": 403,
+      "reason": "Forbidden",
+      "location": null,
+      "content_type": "text/html",
+      "server": "CloudFront",
+      "bytes": 919,
+      "login_redirect": false,
+      "body_snippet": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n<HTML><HEAD><META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=iso-8859-1\">\n<TITLE>ERROR: The request could not be satisfied</TITLE>\n</HEAD><BODY>\n<H1>403 ERROR</H1>\n<H2>The request could ",
+      "seconds": 0.08
+    },
+    {
+      "test": "T5",
+      "url": "https://tableau.bbsr.bund.de/t/bbr/views/Wohnungsneubaubedarfe_insgesamt_2023_bis_2030pa_krs_FINAL/DWohnungsneubaubedare_insgesamt",
+      "ok": false,
+      "page_status": 403,
+      "final_url": "https://tableau.bbsr.bund.de/t/bbr/views/Wohnungsneubaubedarfe_insgesamt_2023_bis_2030pa_krs_FINAL/DWohnungsneubaubedare_insgesamt?:embed=y",
+      "seconds": 63.26,
+      "title": "ERROR: The request could not be satisfied",
+      "login_page": false,
+      "download_menu": {
+        "button_found": false,
+        "options": {}
+      },
+      "vizql_calls": [],
+      "bootstrap_status": null,
+      "bootstrap_bytes": 0,
+      "bootstrap_has_dataDictionary": false,
+      "bootstrap_has_presModel": false,
+      "bootstrap_summary": {
+        "error": "IndexError: list index out of range"
+      },
+      "bootstrap_flags": []
+    }
+  ]
+}
