@@ -4,11 +4,11 @@
 
 - [x] 1.1 Branch `feat/tableau-extract` anlegen; `pyproject.toml` um `pandas`, `pyarrow`, das Extra `browser` (playwright), die Dev-Gruppe (`pytest`, `responses`, `ruff`, `mypy`, `pandas-stubs`), den Entry-Point `tableau-extract` und pytest-Marker `live` (standardmäßig abgewählt) ergänzen; prüfen mit `uv sync --all-groups && uv run tableau-extract --help`
 - [x] 1.2 Modulstruktur nach design.md D1 anlegen (leere Module mit Docstrings, `py.typed`); prüfen mit `uv run ruff check && uv run mypy src`
-- [ ] 1.3 CI-Workflow `.github/workflows/ci.yml` (Push und PR: `ruff check`, `ruff format --check`, `mypy`, `pytest -m "not live"`) anlegen; prüfen mit grünem Lauf auf GitHub
+- [x] 1.3 CI-Workflow `.github/workflows/ci.yml` (Push und PR: `ruff check`, `ruff format --check`, `mypy`, `pytest -m "not live"`) anlegen; prüfen mit grünem Lauf auf GitHub
 
 ## 2. URL und HTTP-Client
 
-- [ ] 2.1 `url.py`: Tableau-View-URL parsen (Basis, Site, Arbeitsmappe, Blatt), `:`-Parameter entfernen, Slug bilden, Nicht-Tableau- und Einbettungs-URLs mit verständlicher Meldung ablehnen (inkl. Hinweis auf `iframe`); prüfen mit `tests/test_url.py` (BBSR-URL mit/ohne `:embed`, URL ohne `/views/`, bbsr.bund.de-Seite)
+- [x] 2.1 `url.py`: Tableau-View-URL parsen (Basis, Site, Arbeitsmappe, Blatt), `:`-Parameter entfernen, Slug bilden, Nicht-Tableau- und Einbettungs-URLs mit verständlicher Meldung ablehnen (inkl. Hinweis auf `iframe`); prüfen mit `tests/test_url.py` (BBSR-URL mit/ohne `:embed`, URL ohne `/views/`, bbsr.bund.de-Seite)
 - [ ] 2.2 `http.py`: höflicher Client nach D8 (User-Agent, ≥1 s Abstand, Backoff 2/4/8 s bei 429/5xx/Timeout, kein Retry bei 401/403/404, Login-Weiterleitung erkennen), Versuchsprotokoll-Eintrag je Anfrage; prüfen mit `tests/test_http.py` (gemockte 503→200, 403, 302 auf `/signin`, Drossel per gemockter Uhr)
 
 ## 3. VizQL-Parser und Fixtures
