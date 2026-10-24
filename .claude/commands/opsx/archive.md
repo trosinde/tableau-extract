@@ -4,6 +4,8 @@ description: "Archive a completed change in the experimental workflow"
 allowed-tools: Bash(openspec:*)
 category: "Workflow"
 tags: ["workflow", "archive", "experimental"]
+model: sonnet
+effort: low
 ---
 
 Archive a completed change in the experimental workflow.

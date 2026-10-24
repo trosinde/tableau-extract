@@ -8,6 +8,8 @@ metadata:
   author: openspec
   version: "1.0"
   generatedBy: "1.15.0"
+model: opus
+effort: high
 ---
 
 Propose a new change - create the change and generate all artifacts in one step.

@@ -8,6 +8,8 @@ metadata:
   author: openspec
   version: "1.0"
   generatedBy: "1.15.0"
+model: opus
+effort: medium
 ---
 
 Enter explore mode. Think deeply. Visualize freely. Follow the conversation wherever it goes.
