@@ -3,7 +3,7 @@
 ## 1. Projektgerüst
 
 - [x] 1.1 Branch `feat/tableau-extract` anlegen; `pyproject.toml` um `pandas`, `pyarrow`, das Extra `browser` (playwright), die Dev-Gruppe (`pytest`, `responses`, `ruff`, `mypy`, `pandas-stubs`), den Entry-Point `tableau-extract` und pytest-Marker `live` (standardmäßig abgewählt) ergänzen; prüfen mit `uv sync --all-groups && uv run tableau-extract --help`
-- [ ] 1.2 Modulstruktur nach design.md D1 anlegen (leere Module mit Docstrings, `py.typed`); prüfen mit `uv run ruff check && uv run mypy src`
+- [x] 1.2 Modulstruktur nach design.md D1 anlegen (leere Module mit Docstrings, `py.typed`); prüfen mit `uv run ruff check && uv run mypy src`
 - [ ] 1.3 CI-Workflow `.github/workflows/ci.yml` (Push und PR: `ruff check`, `ruff format --check`, `mypy`, `pytest -m "not live"`) anlegen; prüfen mit grünem Lauf auf GitHub
 
 ## 2. URL und HTTP-Client
