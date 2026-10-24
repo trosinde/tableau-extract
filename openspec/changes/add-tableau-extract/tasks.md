@@ -9,7 +9,7 @@
 ## 2. URL und HTTP-Client
 
 - [x] 2.1 `url.py`: Tableau-View-URL parsen (Basis, Site, Arbeitsmappe, Blatt), `:`-Parameter entfernen, Slug bilden, Nicht-Tableau- und Einbettungs-URLs mit verständlicher Meldung ablehnen (inkl. Hinweis auf `iframe`); prüfen mit `tests/test_url.py` (BBSR-URL mit/ohne `:embed`, URL ohne `/views/`, bbsr.bund.de-Seite)
-- [ ] 2.2 `http.py`: höflicher Client nach D8 (User-Agent, ≥1 s Abstand, Backoff 2/4/8 s bei 429/5xx/Timeout, kein Retry bei 401/403/404, Login-Weiterleitung erkennen), Versuchsprotokoll-Eintrag je Anfrage; prüfen mit `tests/test_http.py` (gemockte 503→200, 403, 302 auf `/signin`, Drossel per gemockter Uhr)
+- [x] 2.2 `http.py`: höflicher Client nach D8 (User-Agent, ≥1 s Abstand, Backoff 2/4/8 s bei 429/5xx/Timeout, kein Retry bei 401/403/404, Login-Weiterleitung erkennen), Versuchsprotokoll-Eintrag je Anfrage; prüfen mit `tests/test_http.py` (gemockte 503→200, 403, 302 auf `/signin`, Drossel per gemockter Uhr)
 
 ## 3. VizQL-Parser und Fixtures
 
