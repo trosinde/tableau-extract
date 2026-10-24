@@ -41,8 +41,8 @@
 ## 7. CLI, API, Gegenprobe
 
 - [x] 7.1 `api.py`: `extract(url, **opts) -> ExtractResult` (DataFrame, Metadaten, Pfade, Status `neu`/`unverändert`) und `list_view(url) -> ViewListing`, beide mit `_repr_html_`/`__repr__` als kompakte Zusammenfassung (ohne Datenzeilen), Ausnahmen mit `exit_code`; Export in `__init__`; prüfen mit Tests gegen gemockten Weg B (HTML enthält Status/Weg/Blatt/Zeilen/Pfad, keine 400 Zeilen; gesperrt → Ausnahme mit `exit_code = 2`)
-- [ ] 7.2 `cli.py`: alle Optionen (`--sheet`, `--all-filters`, `--out`, `--list`, `--method`, `--check-sum`, `--check-field`, `--gebietsstand`, `--referenz`, `--replay`, `--force`, `--full-check-days`, `--timeout`, `--quiet`), Umgebungsvariablen, Exit-Codes 0/1/2/3; prüfen mit `tests/test_cli.py` (`--list` schreibt nichts; ungültige URL → 1; gesperrt → 2; mehrdeutig → 3; `TABLEAU_EXTRACT_OUT`)
-- [ ] 7.3 Gegenprobe `--check-sum`/`--check-field`: Summe, Abweichung in %, Eintrag in `meta.json`; prüfen mit Test (BBSR-Fixture, Soll 320000 → −1,1 %)
+- [x] 7.2 `cli.py`: alle Optionen (`--sheet`, `--all-filters`, `--out`, `--list`, `--method`, `--check-sum`, `--check-field`, `--gebietsstand`, `--referenz`, `--replay`, `--force`, `--full-check-days`, `--timeout`, `--quiet`), Umgebungsvariablen, Exit-Codes 0/1/2/3; prüfen mit `tests/test_cli.py` (`--list` schreibt nichts; ungültige URL → 1; gesperrt → 2; mehrdeutig → 3; `TABLEAU_EXTRACT_OUT`)
+- [x] 7.3 Gegenprobe `--check-sum`/`--check-field`: Summe, Abweichung in %, Eintrag in `meta.json`; prüfen mit Test (BBSR-Fixture, Soll 320000 → −1,1 %)
 
 ## 8. Nutzung im Jupyter-Notebook
 
