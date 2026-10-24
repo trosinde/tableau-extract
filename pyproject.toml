@@ -31,6 +31,9 @@ dev = [
     "mypy>=1.11",
     "pandas-stubs>=2.2",
     "types-requests>=2.32",
+    "nbclient>=0.10",
+    "nbformat>=5.10",
+    "ipykernel>=6.29",
 ]
 
 [build-system]
@@ -62,3 +65,6 @@ ignore_missing_imports = true
 testpaths = ["tests"]
 markers = ["live: greift auf die echte Tableau-Quelle zu (nur lokal, standardmäßig aus)"]
 addopts = "-m 'not live'"
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/make_notebook.py" = ["E501"]

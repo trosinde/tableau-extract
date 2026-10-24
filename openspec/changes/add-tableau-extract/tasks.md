@@ -46,8 +46,8 @@
 
 ## 8. Nutzung im Jupyter-Notebook
 
-- [ ] 8.1 Wheel-Inhalt absichern: Test baut das Wheel (`uv build`), installiert es in eine frische venv und ruft dort in einem leeren Ordner `extract(..., replay=<fixture>)` auf; prüfen, dass `kreise_2023.csv` im Wheel liegt und die Vollständigkeitsprüfung `referenz = paket` meldet
-- [ ] 8.2 `notebooks/beispiel_raw/` mit der gekürzten BBSR-Antwort (identisch zur Test-Fixture, Gleichheitstest) und `notebooks/schnellstart.ipynb` (Installationszelle mit Tag `skip-ci`, `list_view`, `extract`, zweiter Lauf „unverändert“, pandas-Auswertung, Gegenprobe); prüfen durch lokale Ausführung mit `nbclient` mit und ohne `TABLEAU_EXTRACT_REPLAY`
+- [x] 8.1 Wheel-Inhalt absichern: Test baut das Wheel (`uv build`), installiert es in eine frische venv und ruft dort in einem leeren Ordner `extract(..., replay=<fixture>)` auf; prüfen, dass `kreise_2023.csv` im Wheel liegt und die Vollständigkeitsprüfung `referenz = paket` meldet
+- [x] 8.2 `notebooks/beispiel_raw/` mit der gekürzten BBSR-Antwort (identisch zur Test-Fixture, Gleichheitstest) und `notebooks/schnellstart.ipynb` (Installationszelle mit Tag `skip-ci`, `list_view`, `extract`, zweiter Lauf „unverändert“, pandas-Auswertung, Gegenprobe); prüfen durch lokale Ausführung mit `nbclient` mit und ohne `TABLEAU_EXTRACT_REPLAY`
 - [ ] 8.3 Workflow `.github/workflows/notebook.yml` (Pfade `src/`, `notebooks/`, `pyproject.toml`; Wheel bauen, frische venv mit `ipykernel` + `nbclient`, Notebook mit Replay ausführen, `skip-ci`-Zellen überspringen, ausgeführtes Notebook als Artefakt); `nbclient`/`ipykernel` in die Dev-Gruppe; prüfen mit grünem Lauf und absichtlich kaputter Zelle → rot (lokal mit `act` oder per Test-Branch)
 - [ ] 8.4 README-Abschnitt „Im Jupyter-Notebook“ (Installationszelle per Tag, `[browser]`-Extra mit `playwright install chromium`, Beispielzellen, Hinweis „nur von Privatanschluss/Homelab, nicht Colab“, Replay); prüfen, dass die Zellen dem Beispiel-Notebook entsprechen
 

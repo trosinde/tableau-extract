@@ -114,7 +114,8 @@ class ExtractResult:
             rows.append(("Veröffentlicht", stand["workbookLastPublishedAt"]))
         rows.append(("Pfad", str(self.path) if self.path else "–"))
         for m in self.messages:
-            rows.append(("Hinweis", m))
+            if not m.startswith("Gegenprobe"):
+                rows.append(("Hinweis", m))
         return rows
 
     def _repr_html_(self) -> str:
